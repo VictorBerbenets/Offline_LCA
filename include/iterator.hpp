@@ -21,6 +21,8 @@ public:
     using const_reference   = const value_type&;
     using difference_type   = std::ptrdiff_t;
 
+    TreeIterator() = default;
+
     TreeIterator& operator++() {
         ptr_ = ptr_->successor();
         return *this;
@@ -52,6 +54,8 @@ public:
 private:
 /*----------------------------------------------------------------------------------*/
     pointer ptr_ {nullptr};
+
+    TreeIterator(pointer ptr): ptr_ {ptr} {}
 };
 
 } // <--- namespace yLAB
