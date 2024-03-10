@@ -1,14 +1,16 @@
 #include <memory>
 #include <vector>
+#include <stack>
 #include <iterator>
+#include <concepts>
 #include <cstddef>
 
 namespace yLAB {
 
+template <typename> class Treap;
 
 namespace detail {
 
-template <typename> class Treap;
 
 template <typename Key, typename Priority>
 class Node {
@@ -22,7 +24,7 @@ class Node {
         left_ {left}, right_ {right},
         parent_ {parent} {}
 
-  template <typename> friend class Treap;
+  template <typename> friend class yLAB::Treap;
  private:
   key_type key_;
   priority_type priority_;
@@ -45,9 +47,46 @@ class Treap {
  private:
   using node_type = detail::Node<key_type, value_type>;
  public:
-  template <std::input_iterator Iter>
-  Treap(Iter begin, Iter end) {
 
+  Treap() = default;
+  
+  // Complexity O(n)
+  template <std::input_iterator Iter>
+  requires requires(Iter it) { {*it} -> std::convertible_to<value_type>; }
+  Treap(Iter begin, Iter end) {
+    if (begin == end) return ;
+    
+    std::stack<node_type*> build_nodes;
+    root_ = create_node(0, *(begin++));
+    build_nodes.push(root_);
+    for (size_type order_num {1}; begin != end; begin++) {
+      node_type *top = nullptr;
+      while (!build_nodes.empty()) {
+        top = build_nodes.top();
+        if (top->priority_ < *begin) {
+          auto new_node = create_node(order_num++, *begin, nullptr, top->right_, top); 
+          if (top->right_) {
+            top->right_->parent_ = new_node;
+          }
+          top->right_ = new_node;
+          build_nodes.push(new_node);
+          break;
+        }
+        build_nodes.pop();
+      }
+      if (build_nodes.empty()) {
+        build_nodes.push(create_node(order_num++, *begin, nullptr, top, nullptr));
+        root_ = top->parent_ = build_nodes.top();
+      }
+    }
+  }
+ 
+ private:
+  template <typename... Args>
+  node_type *create_node(Args&&... args) {
+    auto un_ptr = std::make_unique<node_type>(std::forward<Args>(args)...);
+    storage_.push_back(std::move(un_ptr));
+    return storage_.back().get();
   }
 
  private:
