@@ -64,7 +64,7 @@ class Treap {
       while (!build_nodes.empty()) {
         top = build_nodes.top();
         if (top->priority_ < *begin) {
-          auto new_node = create_node(order_num++, *begin, nullptr, top->right_, top); 
+          auto new_node = create_node(order_num++, *begin, nullptr, top->right_, top);
           if (top->right_) {
             top->right_->parent_ = new_node;
           }
@@ -80,7 +80,10 @@ class Treap {
       }
     }
   }
- 
+  
+  size_type size() const noexcept { return storage_.size(); }
+  [[nodiscard]] bool empty() const noexcept { return storage_.size() == 0; }
+  
  private:
   template <typename... Args>
   node_type *create_node(Args&&... args) {
