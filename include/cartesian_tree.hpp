@@ -22,7 +22,7 @@ class Node {
         left_ {left}, right_ {right},
         parent_ {parent} {}
 
-  template <typename T> friend class Treap;
+  template <typename> friend class Treap;
  private:
   key_type key_;
   priority_type priority_;
