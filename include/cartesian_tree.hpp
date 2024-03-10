@@ -67,8 +67,8 @@ class Treap final {
   size_type size() const noexcept { return storage_.size(); }
   [[nodiscard]] bool empty() const noexcept { return storage_.size() == 0; }
 
-  iterator begin() const noexcept { return construct_iterator(begin_node_); }
-  iterator end()   const noexcept { return construct_iterator(end_node_);   }
+  iterator begin() const noexcept { return {begin_node_}; }
+  iterator end()   const noexcept { return {end_node_};   }
   const_iterator cbegin() const noexcept { return begin(); }
   const_iterator cend()   const noexcept { return end();   }
   reverse_iterator rbegin() const { return std::make_reverse_iterator(end());   }
@@ -82,12 +82,6 @@ class Treap final {
     auto un_ptr = std::make_unique<node_type>(std::forward<Args>(args)...);
     storage_.push_back(std::move(un_ptr));
     return storage_.back().get();
-  }
-
-  iterator construct_iterator(pointer ptr) const noexcept {
-    iterator tmp;
-    tmp.ptr_ = ptr;
-    return tmp;
   }
   /* TODO
   * merge()
