@@ -11,7 +11,6 @@ template <typename> class Treap;
 
 namespace detail {
 
-
 template <typename Key, typename Priority>
 class Node {
  public:
@@ -48,7 +47,7 @@ class Treap {
   using node_type = detail::Node<key_type, value_type>;
  public:
 
-  Treap() = default;
+  constexpr Treap() = default;
   
   // Complexity O(n)
   template <std::input_iterator Iter>
@@ -80,11 +79,12 @@ class Treap {
       }
     }
   }
-  
+ 
   size_type size() const noexcept { return storage_.size(); }
   [[nodiscard]] bool empty() const noexcept { return storage_.size() == 0; }
-  
+ 
  private:
+
   template <typename... Args>
   node_type *create_node(Args&&... args) {
     auto un_ptr = std::make_unique<node_type>(std::forward<Args>(args)...);
@@ -92,6 +92,13 @@ class Treap {
     return storage_.back().get();
   }
 
+  /* TODO
+  * merge()
+  * split()
+  * insert()
+  * erase()
+  * find()
+  */
  private:
   node_type *root_;
   std::vector<std::unique_ptr<node_type>> storage_;
