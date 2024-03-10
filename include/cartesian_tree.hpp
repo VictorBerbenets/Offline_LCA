@@ -13,17 +13,22 @@
 namespace yLAB {
 
 template <typename T>
-class Treap {
+class Treap final {
  public:
-  using size_type       = std::size_t;
-  using key_type        = size_type;
-  using value_type      = T;
-  using difference_type = std::ptrdiff_t;
-  using reference       = value_type&;
-  using const_reference = const value_type&;
-
+  using size_type              = std::size_t;
+  using key_type               = size_type;
+  using value_type             = T;
+  using node_type              = detail::Node<key_type, value_type>;
+  using difference_type        = std::ptrdiff_t;
+  using reference              = value_type&;
+  using const_reference        = const value_type&;
+  using pointer                = node_type*;
+  using const_pointer          = const node_type*;
+  using const_iterator         = TreeIterator<key_type, value_type>;
+  using iterator               = const_iterator;
+  using reverse_iterator       = std::reverse_iterator<iterator>;
+  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
  private:
-  using node_type = detail::Node<key_type, value_type>;
  public:
 
   constexpr Treap() = default;
@@ -61,9 +66,17 @@ class Treap {
  
   size_type size() const noexcept { return storage_.size(); }
   [[nodiscard]] bool empty() const noexcept { return storage_.size() == 0; }
- 
- private:
 
+  iterator begin() const noexcept { return construct_iterator(begin_node_); }
+  iterator end()   const noexcept { return construct_iterator(end_node_);   }
+  const_iterator cbegin() const noexcept { return begin(); }
+  const_iterator cend()   const noexcept { return end();   }
+  reverse_iterator rbegin() const { return std::make_reverse_iterator(end());   }
+  reverse_iterator rend()   const { return std::make_reverse_iterator(begin()); }
+  const_reverse_iterator crbegin() const { return std::make_reverse_iterator(cend());   }
+  const_reverse_iterator crend()   const { return std::make_reverse_iterator(cbegin()); } 
+ private:
+ 
   template <typename... Args>
   node_type *create_node(Args&&... args) {
     auto un_ptr = std::make_unique<node_type>(std::forward<Args>(args)...);
@@ -71,6 +84,11 @@ class Treap {
     return storage_.back().get();
   }
 
+  iterator construct_iterator(pointer ptr) const noexcept {
+    iterator tmp;
+    tmp.ptr_ = ptr;
+    return tmp;
+  }
   /* TODO
   * merge()
   * split()
@@ -79,7 +97,7 @@ class Treap {
   * find()
   */
  private:
-  node_type *root_;
+  node_type *root_, *begin_node_, *end_node_;
   std::vector<std::unique_ptr<node_type>> storage_;
 };
 
