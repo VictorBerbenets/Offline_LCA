@@ -2,9 +2,10 @@
 
 namespace yLAB {
 
-template <typename> class Treap;
 
 namespace detail {
+
+template <typename> class Treap;
 
 template <typename Key, typename Priority>
 class Node {
@@ -14,7 +15,7 @@ class Node {
   
   Node(const key_type &key, const priority_type &priority, Node *right = nullptr,
        Node *left = nullptr, Node *parent = nullptr)
-      : key_ {key}, priority_ {priority_},
+      : key_ {key}, priority_ {priority},
         left_ {left}, right_ {right},
         parent_ {parent} {}
 
@@ -26,12 +27,12 @@ class Node {
   Node *left_, *right_, *parent_;
 };
 
+} // <--- namespace detail
+
 template <typename T>
 class Treap {
 
 };
-
-} // <--- namespace detail
 
 } // <--- namespace yLAB
 
