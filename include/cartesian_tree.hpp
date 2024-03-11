@@ -6,6 +6,7 @@
 #include <iterator>
 #include <concepts>
 #include <cstddef>
+#include <initializer_list>
 
 #include "node.hpp"
 #include "iterator.hpp"
@@ -35,8 +36,11 @@ class Treap final {
  public:
 
   constexpr Treap()
-    : end_node_ {create_node<base_node>(root_)} {}
+      : end_node_ {create_node<base_node>(root_)} {}
   
+  Treap(std::initializer_list<value_type> i_list)
+      : Treap(i_list.begin(), i_list.end()) {}
+
   // Complexity O(n)
   template <std::input_iterator Iter>
   requires requires(Iter it) { {*it} -> std::convertible_to<value_type>; }
