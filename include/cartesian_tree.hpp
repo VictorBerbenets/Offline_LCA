@@ -111,5 +111,8 @@ class Treap final {
   std::vector<std::unique_ptr<base_node>> storage_;
 };
 
+template <std::input_iterator Iter>
+Treap(Iter, Iter) -> Treap<typename std::iterator_traits<Iter>::value_type>;
+
 } // <--- namespace yLAB
 
