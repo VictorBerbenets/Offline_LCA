@@ -36,7 +36,6 @@ class Treap final {
 
   constexpr Treap()
     : end_node_ {create_node<base_node>(root_)} {}
- 
   
   // Complexity O(n)
   template <std::input_iterator Iter>
@@ -76,7 +75,10 @@ class Treap final {
   size_type size() const noexcept { return storage_.size(); }
   [[nodiscard]] bool empty() const noexcept { return storage_.size() == 0; }
 
-  iterator begin() const noexcept { return {begin_node_}; }
+  iterator begin() const noexcept {
+    if (begin_node_) { return {begin_node_}; }
+    return {end_node_};
+  }
   iterator end()   const noexcept { return {end_node_};   }
   const_iterator cbegin() const noexcept { return begin(); }
   const_iterator cend()   const noexcept { return end();   }
@@ -87,7 +89,7 @@ class Treap final {
  private:
   
   void make_root_links() noexcept {
-    end_node_ = create_node<base_node>(root_);
+    end_node_      = create_node<base_node>(root_);
     root_->parent_ = end_node_;
     begin_node_    = node_type::get_most_left(root_);
   }
@@ -106,9 +108,10 @@ class Treap final {
   * find()
   */
  private:
-  base_node *end_node_;
-  node_type *root_, *begin_node_;
   std::vector<std::unique_ptr<base_node>> storage_;
+
+  node_type *root_ {nullptr}, *begin_node_ {nullptr};
+  base_node *end_node_;
 };
 
 template <std::input_iterator Iter>

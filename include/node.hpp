@@ -17,6 +17,7 @@ class BaseNode {
   
   virtual ~BaseNode() {}
 
+  template <typename, typename> friend class Node;
  protected:
    child_type *left_; 
 };
@@ -39,14 +40,14 @@ class Node final: public BaseNode<Key, Priority> {
 
   Node *successor() {
     if (right_) {
-      return get_most_left(static_cast<node_type*>(right_));
+      return get_most_left(right_);
     }
     return const_cast<pointer>(go_upper_inc());
   }
 
   Node *predecessor() {
     if (this->left_) {
-      return get_most_right(static_cast<node_type*>(this->left_));
+      return get_most_right(this->left_);
     }
     return const_cast<pointer>(go_upper_dec());
   } 
@@ -69,25 +70,28 @@ class Node final: public BaseNode<Key, Priority> {
   template <typename> friend class yLAB::Treap;
  private:
   auto go_upper_dec() const {
-    auto tmp = static_cast<node_type*>(parent_);
+    auto tmp  = parent_;
     auto copy = this;
     while (copy == tmp->left_) {
-      copy = std::exchange(tmp, static_cast<node_type*>(tmp->parent_));
+      copy = static_cast<node_type*>(std::exchange(tmp,
+                                       static_cast<node_type*>(tmp)->parent_));
     }
     if (copy->left_ != tmp) {
-      copy = tmp;
+      copy = static_cast<node_type*>(tmp);
     }
     return copy;
   }
 
   auto go_upper_inc() const {
-    auto tmp = static_cast<node_type*>(parent_);
+    auto tmp = parent_;
     auto copy = this;
-    while (copy == tmp->right_) {
-      copy = std::exchange(tmp, static_cast<node_type*>(tmp->parent_));
+    while (tmp->left_ != copy &&
+           copy == static_cast<node_type*>(tmp)->right_) {
+      copy = static_cast<node_type*>(std::exchange(tmp,
+                                       static_cast<node_type*>(tmp)->parent_));
     }
     if (copy->right_ != tmp) {
-      copy = tmp;
+      copy = static_cast<node_type*>(tmp);
     }
     return copy;
   }
@@ -96,7 +100,7 @@ class Node final: public BaseNode<Key, Priority> {
   priority_type priority_;
   
   base_node *parent_;
-  Node *right_;
+  node_type *right_;
 };
 
 } // <--- namespace detail
