@@ -12,13 +12,15 @@
 
 namespace yLAB {
 
+namespace dt = detail;
+
 template <typename T>
 class Treap final {
  public:
   using size_type              = std::size_t;
   using key_type               = size_type;
   using value_type             = T;
-  using node_type              = detail::Node<key_type, value_type>;
+  using node_type              = dt::Node<key_type, value_type>;
   using difference_type        = std::ptrdiff_t;
   using reference              = value_type&;
   using const_reference        = const value_type&;
@@ -29,9 +31,12 @@ class Treap final {
   using reverse_iterator       = std::reverse_iterator<iterator>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
  private:
+  using base_node = node_type::base_node;
  public:
 
-  constexpr Treap() = default;
+  constexpr Treap()
+    : end_node_ {create_node<base_node>(root_)} {}
+ 
   
   // Complexity O(n)
   template <std::input_iterator Iter>
@@ -40,14 +45,15 @@ class Treap final {
     if (begin == end) return ;
     
     std::stack<node_type*> build_nodes;
-    root_ = create_node(0, *(begin++));
+    root_ = create_node<node_type>(0, *(begin++));
     build_nodes.push(root_);
     for (size_type order_num {1}; begin != end; begin++) {
       node_type *top = nullptr;
       while (!build_nodes.empty()) {
         top = build_nodes.top();
         if (top->priority_ < *begin) {
-          auto new_node = create_node(order_num++, *begin, nullptr, top->right_, top);
+          auto new_node = create_node<node_type>(order_num++, *begin, nullptr,
+                                                 top->right_, top);
           if (top->right_) {
             top->right_->parent_ = new_node;
           }
@@ -58,10 +64,13 @@ class Treap final {
         build_nodes.pop();
       }
       if (build_nodes.empty()) {
-        build_nodes.push(create_node(order_num++, *begin, nullptr, top, nullptr));
-        root_ = top->parent_ = build_nodes.top();
+        build_nodes.push(create_node<node_type>(order_num++, *begin, nullptr,
+                                                top, nullptr));
+        top->parent_ = build_nodes.top();
+        root_ = static_cast<node_type*>(top->parent_);
       }
     }
+    make_root_links();
   }
  
   size_type size() const noexcept { return storage_.size(); }
@@ -76,12 +85,18 @@ class Treap final {
   const_reverse_iterator crbegin() const { return std::make_reverse_iterator(cend());   }
   const_reverse_iterator crend()   const { return std::make_reverse_iterator(cbegin()); } 
  private:
- 
-  template <typename... Args>
-  node_type *create_node(Args&&... args) {
-    auto un_ptr = std::make_unique<node_type>(std::forward<Args>(args)...);
+  
+  void make_root_links() noexcept {
+    end_node_ = create_node<base_node>(root_);
+    root_->parent_ = end_node_;
+    begin_node_    = node_type::get_most_left(root_);
+  }
+
+  template <typename NodeType, typename... Args>
+  NodeType *create_node(Args&&... args) {
+    auto un_ptr = std::make_unique<NodeType>(std::forward<Args>(args)...);
     storage_.push_back(std::move(un_ptr));
-    return storage_.back().get();
+    return static_cast<NodeType*>(storage_.back().get());
   }
   /* TODO
   * merge()
@@ -91,8 +106,9 @@ class Treap final {
   * find()
   */
  private:
-  node_type *root_, *begin_node_, *end_node_;
-  std::vector<std::unique_ptr<node_type>> storage_;
+  base_node *end_node_;
+  node_type *root_, *begin_node_;
+  std::vector<std::unique_ptr<base_node>> storage_;
 };
 
 } // <--- namespace yLAB
