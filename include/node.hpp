@@ -12,7 +12,7 @@ template <typename Key, typename Priority>
 class BaseNode {
   using child_type = Node<Key, Priority>;
  public:
-  BaseNode(child_type *child): left_ {child} {}
+  BaseNode(child_type *child = nullptr): left_ {child} {}
   
   virtual ~BaseNode() {}
 
