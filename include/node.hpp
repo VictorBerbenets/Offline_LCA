@@ -6,8 +6,22 @@ template <typename> class Treap;
 
 namespace detail {
 
+template <typename, typename> class Node;
+
 template <typename Key, typename Priority>
-class Node final {
+class BaseNode {
+  using child_type = Node<Key, Priority>;
+ public:
+  BaseNode(child_type *child): left_ {child} {}
+  
+  virtual ~BaseNode() {}
+
+ protected:
+   child_type *left_; 
+};
+
+template <typename Key, typename Priority>
+class Node final: public BaseNode<Key, Priority> {
  public:
   using key_type      = Key;
   using priority_type = Priority;
@@ -15,8 +29,8 @@ class Node final {
   using const_pointer = const Node*;
   Node(const key_type &key, const priority_type &priority, Node *right = nullptr,
        Node *left = nullptr, Node *parent = nullptr)
-      : key_ {key}, priority_ {priority},
-        left_ {left}, right_ {right},
+      : BaseNode<Key, Priority>(left), key_ {key},
+        priority_ {priority}, right_ {right},
         parent_ {parent} {}
 
   Node *successor() {
@@ -27,14 +41,12 @@ class Node final {
   }
 
   Node *predecessor() {
-    if (left_) {
-      return get_most_right(left_);
+    if (this->left_) {
+      return get_most_right(this->left_);
     }
     return const_cast<pointer>(go_upper_dec());
   } 
 
-  template <typename> friend class yLAB::Treap;
- private:
   static auto get_most_right(pointer start) noexcept {
     while(start->right_) {
       start = start->right_;
@@ -49,6 +61,8 @@ class Node final {
     return start;
   }
 
+  template <typename> friend class yLAB::Treap;
+ private:
   auto go_upper_dec() const {
     auto tmp = parent_;
     auto copy = this;
@@ -76,7 +90,7 @@ class Node final {
   key_type key_;
   priority_type priority_;
 
-  Node *left_, *right_, *parent_;
+  Node *right_, *parent_;
 };
 
 } // <--- namespace detail
