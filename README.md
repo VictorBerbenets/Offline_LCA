@@ -1,4 +1,4 @@
-# Search tree implementation (AVL tree)
+# Solving RMQ problem
 ### About 
 This program solves RMQ problem in <O(n), O(1)> complexity. Where preprocessing
 takes O(n) and answering each querry - O(1).
