@@ -9,9 +9,9 @@ namespace detail {
 
 template <typename, typename> class Node;
 
-template <typename Key, typename Priority>
+template <typename NodeType>
 class BaseNode {
-  using child_type = Node<Key, Priority>;
+  using child_type = NodeType;
  public:
   BaseNode(child_type *child = nullptr): left_ {child} {}
   
@@ -23,18 +23,18 @@ class BaseNode {
 };
 
 template <typename Key, typename Priority>
-class Node final: public BaseNode<Key, Priority> {
+class Node final: public BaseNode<Node<Key, Priority>> {
  public:
   using key_type      = Key;
   using priority_type = Priority;
   using pointer       = Node*;
   using const_pointer = const Node*;
-  using base_node     = BaseNode<key_type, priority_type>;
   using node_type     = Node<key_type, priority_type>;
+  using base_node     = BaseNode<node_type>;
 
   Node(const key_type &key, const priority_type &priority, Node *right = nullptr,
        Node *left = nullptr, Node *parent = nullptr)
-      : BaseNode<Key, Priority>(left), key_ {key},
+      : BaseNode<node_type>(left), key_ {key},
         priority_ {priority}, parent_ {parent},
         right_ {right} {}
 

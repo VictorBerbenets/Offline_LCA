@@ -15,7 +15,7 @@ class TreeIterator final {
   using node_type = detail::Node<KeyT, Priority>;
  public:
   using iterator_category = std::bidirectional_iterator_tag;
-  using value_type        = detail::BaseNode<KeyT, Priority>;
+  using value_type        = detail::BaseNode<node_type>;
   using pointer           = value_type*;
   using reference         = value_type&;
   using const_pointer     = const value_type*;
