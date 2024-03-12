@@ -79,10 +79,7 @@ class Treap final {
   size_type size() const noexcept { return storage_.size(); }
   [[nodiscard]] bool empty() const noexcept { return storage_.size() == 0; }
 
-  iterator begin() const noexcept {
-    if (begin_node_) { return {begin_node_}; }
-    return {end_node_};
-  }
+  iterator begin() const noexcept { return {begin_node_}; }
   iterator end()   const noexcept { return {end_node_};   }
   const_iterator cbegin() const noexcept { return begin(); }
   const_iterator cend()   const noexcept { return end();   }
@@ -104,8 +101,14 @@ class Treap final {
     storage_.push_back(std::move(un_ptr));
     return static_cast<NodeType*>(storage_.back().get());
   }
+
+  // it works only if all keys in right are bigger than in left
+  void merge(const node_type *left, const node_type *right) {
+	if (left->priority_ < right->priority_) {
+	  
+	}
+  }
   /* TODO
-  * merge()
   * split()
   * insert()
   * erase()
@@ -114,8 +117,9 @@ class Treap final {
  private:
   std::vector<std::unique_ptr<base_node>> storage_;
 
-  node_type *root_ {nullptr}, *begin_node_ {nullptr};
   base_node *end_node_;
+  base_node *begin_node_ {end_node_};
+  node_type *root_ {nullptr};
 };
 
 template <std::input_iterator Iter>
