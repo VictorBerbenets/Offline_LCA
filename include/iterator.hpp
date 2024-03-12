@@ -25,12 +25,12 @@ class TreeIterator final {
   TreeIterator() = default;
 
   TreeIterator& operator++() {
-    ptr_ = static_cast<node_type*>(ptr_)->successor();
+    ptr_ = node_type::successor(static_cast<node_type*>(ptr_));
     return *this;
   }
 
   TreeIterator& operator--() {
-    ptr_ = static_cast<node_type*>(ptr_)->predecessor();
+    ptr_ = node_type::predecessor(ptr_);
     return *this;
   }
 

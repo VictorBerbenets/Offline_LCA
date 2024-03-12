@@ -38,18 +38,18 @@ class Node final: public BaseNode<Key, Priority> {
         priority_ {priority}, parent_ {parent},
         right_ {right} {}
 
-  Node *successor() {
-    if (right_) {
-      return get_most_left(right_);
+  static Node *successor(node_type *node) {
+    if (node->right_) {
+      return get_most_left(node->right_);
     }
-    return const_cast<pointer>(go_upper_inc());
+    return const_cast<pointer>(node->go_upper_inc());
   }
 
-  Node *predecessor() {
-    if (this->left_) {
-      return get_most_right(this->left_);
+  static Node *predecessor(base_node *b_node) {
+    if (b_node->left_) {
+      return get_most_right(b_node->left_);
     }
-    return const_cast<pointer>(go_upper_dec());
+    return const_cast<pointer>(static_cast<node_type*>(b_node)->go_upper_dec());
   } 
 
   static auto get_most_right(pointer start) noexcept {
