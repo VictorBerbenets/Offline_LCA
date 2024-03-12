@@ -77,6 +77,7 @@ class Treap final {
     make_root_links();
   }
 
+  // it works only if all keys in right are bigger than in left
   static Treap merge(const Treap &left, const Treap &right) {
 	Treap result;
 	result.root_ = result.merge_impl(left.root_, right.root_);
@@ -113,7 +114,6 @@ class Treap final {
     return static_cast<NodeType*>(storage_.back().get());
   }
 
-  // it works only if all keys in right are bigger than in left
   node_type *merge_impl(node_type *left, node_type *right) {
 	if (!left)  { return right; }
 	if (!right) { return left;  }
@@ -127,12 +127,21 @@ class Treap final {
 	return create_node<node_type>(right->key_, right->priority_, right->right_,
                                   new_left, right);
   }
+  
+  std::pair<node_type*, node_type*> split(node_type *node, size_type key) {
+  if (!node) { return {nullptr, nullptr}; }	
 
-  /* TODO
-  * split()
-  * insert()
-  * erase()
-  */
+  if (node->key_ <= key) {
+	  auto [left, right] = split(node->right_, key);
+	  node->right_ = left;
+	  return {node, right};
+	} else {
+	  auto [left, right] = split(node->left_, key);
+	  node->left_ = right;
+	  return {left, node};
+	}
+  }
+
  private:
   std::vector<std::unique_ptr<base_node>> storage_;
 
