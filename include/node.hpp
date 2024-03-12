@@ -17,6 +17,7 @@ class BaseNode {
   
   virtual ~BaseNode() {}
 
+  template <typename> friend class yLAB::Treap;
   template <typename, typename> friend class Node;
  protected:
    child_type *left_; 
