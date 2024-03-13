@@ -117,31 +117,31 @@ class Treap final {
   }
 
   node_type *merge_impl(node_type *left, node_type *right) {
-	if (!left)  { return right; }
-	if (!right) { return left;  }
+    if (!left)  { return right; }
+    if (!right) { return left;  }
 
-	if (left->priority_ < right->priority_) {
-    auto new_right = merge_impl(left->right_, right);
-	  return create_node<node_type>(left->key_, left->priority_, new_right,
-                                    left->left_, left);
-	}
-  auto new_left = merge_impl(left, right->left_);
-	return create_node<node_type>(right->key_, right->priority_, right->right_,
+    if (left->priority_ < right->priority_) {
+      auto new_right = merge_impl(left->right_, right);
+      return create_node<node_type>(left->key_, left->priority_, new_right,
+                                      left->left_, left);
+    }
+    auto new_left = merge_impl(left, right->left_);
+    return create_node<node_type>(right->key_, right->priority_, right->right_,
                                   new_left, right);
   }
   
   std::pair<node_type*, node_type*> split(node_type *node, size_type key) {
-  if (!node) { return {nullptr, nullptr}; }	
+    if (!node) { return {nullptr, nullptr}; }	
 
-  if (node->key_ <= key) {
-	  auto [left, right] = split(node->right_, key);
-	  node->right_ = left;
-	  return {node, right};
-	} else {
-	  auto [left, right] = split(node->left_, key);
-	  node->left_ = right;
-	  return {left, node};
-	}
+    if (node->key_ <= key) {
+      auto [left, right] = split(node->right_, key);
+      node->right_ = left;
+      return {node, right};
+    } else {
+      auto [left, right] = split(node->left_, key);
+      node->left_ = right;
+      return {left, node};
+    }
   }
 
   template <typename> friend class RmqSolver;
