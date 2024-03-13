@@ -20,7 +20,7 @@ class SparseTable final {
   constexpr SparseTable(std::initializer_list<value_type> i_list)
       : SparseTable(i_list.begin(), i_list.end()) {}
 
-  template <std::forward_iterator Iter>
+  template <std::input_iterator Iter>
   constexpr SparseTable(Iter begin, Iter end, size_type n)
       : sparse_ (log2_floor(n) + 1, std::vector<value_type>(n)) {
     if (n == 0) return;
@@ -55,6 +55,10 @@ class SparseTable final {
  private:
   sparse_type sparse_;
 };
+
+template <std::input_iterator Iter>
+SparseTable(Iter begin, Iter end) ->
+                   SparseTable<typename std::iterator_traits<Iter>::value_type;
 
 } // <--- namespace yLAB
 
