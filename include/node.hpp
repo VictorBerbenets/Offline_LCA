@@ -4,6 +4,7 @@ namespace yLAB {
 
 template <typename, typename> class TreeIterator;
 template <typename> class Treap;
+template <typename> class RmqSolver;
 
 namespace detail {
 
@@ -69,6 +70,7 @@ class Node final: public BaseNode<Node<Key, Priority>> {
 
   template <typename, typename> friend class yLAB::TreeIterator;
   template <typename> friend class yLAB::Treap;
+  template <typename> friend class yLAB::RmqSolver;
  private:
   auto go_upper_dec() const {
     auto tmp  = parent_;

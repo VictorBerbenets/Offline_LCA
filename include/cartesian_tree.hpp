@@ -15,6 +15,8 @@ namespace yLAB {
 
 namespace dt = detail;
 
+template <typename> class RmqSolver;
+
 template <typename T>
 class Treap final {
  public:
@@ -79,11 +81,11 @@ class Treap final {
 
   // it works only if all keys in right are bigger than in left
   static Treap merge(const Treap &left, const Treap &right) {
-	Treap result;
-	result.root_ = result.merge_impl(left.root_, right.root_);
-  	result.make_root_links();
-	
-	return result;
+    Treap result;
+    result.root_ = result.merge_impl(left.root_, right.root_);
+    result.make_root_links();
+    
+    return result;
   }
  
   size_type size() const noexcept { return storage_.size(); }
@@ -101,10 +103,10 @@ class Treap final {
   
   void make_root_links() noexcept {
     end_node_->left_ = root_;
-	if (root_) {
+	  if (root_) {
       root_->parent_ = end_node_;
       begin_node_    = node_type::get_most_left(root_);
-	}
+	  }
   }
 
   template <typename NodeType, typename... Args>
@@ -119,11 +121,11 @@ class Treap final {
 	if (!right) { return left;  }
 
 	if (left->priority_ < right->priority_) {
-      auto new_right = merge_impl(left->right_, right);
+    auto new_right = merge_impl(left->right_, right);
 	  return create_node<node_type>(left->key_, left->priority_, new_right,
                                     left->left_, left);
 	}
-    auto new_left = merge_impl(left, right->left_);
+  auto new_left = merge_impl(left, right->left_);
 	return create_node<node_type>(right->key_, right->priority_, right->right_,
                                   new_left, right);
   }
@@ -142,6 +144,7 @@ class Treap final {
 	}
   }
 
+  template <typename> friend class RmqSolver;
  private:
   std::vector<std::unique_ptr<base_node>> storage_;
 
