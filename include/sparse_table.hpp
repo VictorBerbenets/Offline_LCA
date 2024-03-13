@@ -1,9 +1,10 @@
 #pragma once
 
-#include <vector>
-#include <iterator>
+#include <initializer_list>
 #include <algorithm>
+#include <iterator>
 #include <utility>
+#include <vector>
 #include <cmath>
 #include <bit>
 
@@ -16,9 +17,14 @@ class SparseTable final {
   using value_type  = T;
   using sparse_type = std::vector<std::vector<value_type>>;
 
+  constexpr SparseTable(std::initializer_list<value_type> i_list)
+      : SparseTable(i_list.begin(), i_list.end()) {}
+
   template <std::forward_iterator Iter>
   constexpr SparseTable(Iter begin, Iter end, size_type n)
       : sparse_ (log2_floor(n) + 1, std::vector<value_type>(n)) {
+    if (n == 0) return;
+
     size_type log = log2_floor(n);
     std::transform(begin, end, sparse_[0].begin(), [](const value_type &value) {
       return value;
@@ -26,7 +32,7 @@ class SparseTable final {
 
     for (size_type i = 0; i < log; ++i) {
       for (size_type j = 0; j < n; ++j) {
-        size_type k = std::min(n, j + (1 << i));
+        size_type k = std::min(n - 1, j + (1 << i));
         sparse_[i + 1][j] = std::min(sparse_[i][j], sparse_[i][k]);
       }
     }
