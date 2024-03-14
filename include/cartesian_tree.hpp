@@ -53,17 +53,17 @@ class Treap final {
     std::stack<node_type*> build_nodes;
     root_ = create_node<node_type>(0, *(begin++));
     build_nodes.push(root_);
-    for (size_type order_num {1}; begin != end; begin++) {
+    for (size_type order_num {1}; begin != end; ++begin) {
       node_type *top = nullptr;
       while (!build_nodes.empty()) {
         top = build_nodes.top();
-        if (top->priority_ < *begin) {
+        if (top->priority() < *begin) {
           auto new_node = create_node<node_type>(order_num++, *begin, nullptr,
-                                                 top->right_, top);
-          if (top->right_) {
-            top->right_->parent_ = new_node;
+                                                 top->right(), top);
+          if (top->right()) {
+            top->right()->parent() = new_node;
           }
-          top->right_ = new_node;
+          top->right() = new_node;
           build_nodes.push(new_node);
           break;
         }
@@ -72,8 +72,8 @@ class Treap final {
       if (build_nodes.empty()) {
         build_nodes.push(create_node<node_type>(order_num++, *begin, nullptr,
                                                 top, nullptr));
-        top->parent_ = build_nodes.top();
-        root_ = static_cast<node_type*>(top->parent_);
+        top->parent() = build_nodes.top();
+        root_ = static_cast<node_type*>(top->parent());
       }
     }
     make_root_links();
@@ -97,15 +97,15 @@ class Treap final {
   const_iterator cend()   const noexcept { return end();   }
   reverse_iterator rbegin() const { return std::make_reverse_iterator(end());   }
   reverse_iterator rend()   const { return std::make_reverse_iterator(begin()); }
-  const_reverse_iterator crbegin() const { return std::make_reverse_iterator(cend());   }
-  const_reverse_iterator crend()   const { return std::make_reverse_iterator(cbegin()); } 
+  const_reverse_iterator crbegin() const { return rbegin();   }
+  const_reverse_iterator crend()   const { return rbegin(); } 
  private:
   
   void make_root_links() noexcept {
-    end_node_->left_ = root_;
+    end_node_->left() = root_;
 	  if (root_) {
-      root_->parent_ = end_node_;
-      begin_node_    = node_type::get_most_left(root_);
+      root_->parent() = end_node_;
+      begin_node_     = node_type::get_most_left(root_);
 	  }
   }
 
