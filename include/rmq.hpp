@@ -20,7 +20,7 @@ class RmqSolver final {
   using tree_type   = Treap<value_type>;
  public:
 
-  template <std::forward_iterator Iter>
+  template <std::input_iterator Iter>
   RmqSolver(Iter begin, Iter end) 
  	  : tree_ (begin, end) {
     euler_tour(); 
