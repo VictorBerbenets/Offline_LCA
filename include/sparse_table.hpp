@@ -6,7 +6,8 @@
 #include <utility>
 #include <vector>
 #include <cmath>
-#include <bit>
+
+#include "utils.hpp"
 
 namespace yLAB {
 
@@ -57,9 +58,6 @@ class SparseTable final {
     }
   }
 
-  constexpr int log2_floor(size_type number) const noexcept {
-    return std::bit_width(number) - 1;
-  }
  private:
   sparse_type sparse_;
 };
