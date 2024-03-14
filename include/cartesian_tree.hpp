@@ -120,26 +120,26 @@ class Treap final {
     if (!left)  { return right; }
     if (!right) { return left;  }
 
-    if (left->priority_ < right->priority_) {
-      auto new_right = merge_impl(left->right_, right);
-      return create_node<node_type>(left->key_, left->priority_, new_right,
-                                      left->left_, left);
+    if (left->priority() < right->priority()) {
+      auto new_right = merge_impl(left->right(), right);
+      return create_node<node_type>(left->key(), left->priority(), new_right,
+                                      left->left(), left);
     }
-    auto new_left = merge_impl(left, right->left_);
-    return create_node<node_type>(right->key_, right->priority_, right->right_,
+    auto new_left = merge_impl(left, right->left());
+    return create_node<node_type>(right->key(), right->priority(), right->right(),
                                   new_left, right);
   }
   
   std::pair<node_type*, node_type*> split(node_type *node, size_type key) {
     if (!node) { return {nullptr, nullptr}; }	
 
-    if (node->key_ <= key) {
-      auto [left, right] = split(node->right_, key);
-      node->right_ = left;
+    if (node->key() <= key) {
+      auto [left, right] = split(node->right(), key);
+      node->right() = left;
       return {node, right};
     } else {
-      auto [left, right] = split(node->left_, key);
-      node->left_ = right;
+      auto [left, right] = split(node->left(), key);
+      node->left() = right;
       return {left, node};
     }
   }
