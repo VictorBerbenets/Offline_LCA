@@ -38,7 +38,6 @@ class SparseTable final {
                     sparse_[i][query.second - (1 << i) + 1]);
   }
 
- private:
   template <std::input_iterator Iter>
   constexpr void construct(Iter begin, Iter end, size_type n) {
     if (n == 0) return;
