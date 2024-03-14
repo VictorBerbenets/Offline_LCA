@@ -7,6 +7,7 @@
 #include <unordered_set>
 
 #include "cartesian_tree.hpp"
+#include "sparse_table.hpp"
 
 namespace yLAB {
 
@@ -19,7 +20,7 @@ class RmqSolver final {
   using tree_type   = Treap<value_type>;
  public:
 
-  template <std::input_iterator Iter>
+  template <std::forward_iterator Iter>
   RmqSolver(Iter begin, Iter end) 
  	  : tree_ (begin, end) {
     euler_tour(); 
@@ -41,22 +42,22 @@ class RmqSolver final {
     auto curr_pair = std::make_pair(tree_.root_, 0);
     // for state: 0 => initial visit, 1 => just did left, 2 => just did right
     for (size_type state {0}, path {0}; curr_pair.first; ++path) {
-      if (visited.find(curr_pair.first->key_) == visited.end()) {
-        visited.insert(curr_pair.first->key_);
+      if (visited.find(curr_pair.first->key()) == visited.end()) {
+        visited.insert(curr_pair.first->key());
         first_appear_.push_back(path);
       }
-      euler_tour_.push_back(curr_pair.first->priority_);
+      euler_tour_.push_back(curr_pair.first->priority());
       heights_.push_back(curr_pair.second);
 
-      if (curr_pair.first->left_ && state < 1) {
+      if (curr_pair.first->left() && state < 1) {
         stack.push(curr_pair);
-        curr_pair = std::make_pair(curr_pair.first->left_, curr_pair.second + 1);
+        curr_pair = std::make_pair(curr_pair.first->left(), curr_pair.second + 1);
         state = 0;
         continue;
       }
-      if (curr_pair.first->right_ && state < 2) {
+      if (curr_pair.first->right() && state < 2) {
         stack.push(curr_pair);
-        curr_pair = std::make_pair(curr_pair.first->right_, curr_pair.second + 1);
+        curr_pair = std::make_pair(curr_pair.first->right(), curr_pair.second + 1);
         state = 0;
         continue;
       }
@@ -66,14 +67,17 @@ class RmqSolver final {
       auto child = curr_pair.first;
       curr_pair  = stack.top();
       stack.pop();
-      state = (child == curr_pair.first->left_ ? 1 : 2);
+      state = (child == curr_pair.first->left() ? 1 : 2);
     }
   }
-	
+
+  void rmq() const {}
+
  private:
   std::vector<size_type> euler_tour_;
   std::vector<size_type> heights_;
   std::vector<size_type> first_appear_;
+  SparseTable<value_type> sparse_table_;
   tree_type tree_;
 };
 
