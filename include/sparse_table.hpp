@@ -16,14 +16,33 @@ class SparseTable final {
   using size_type   = std::size_t;
   using value_type  = T;
   using sparse_type = std::vector<std::vector<value_type>>;
+  
+  constexpr SparseTable() = default;
 
   constexpr SparseTable(std::initializer_list<value_type> i_list)
       : SparseTable(i_list.begin(), i_list.end(), i_list.size()) {}
 
   template <std::input_iterator Iter>
-  constexpr SparseTable(Iter begin, Iter end, size_type n)
-      : sparse_ (log2_floor(n) + 1, std::vector<value_type>(n)) {
+  constexpr SparseTable(Iter begin, Iter end, size_type n) {
+    construct(begin, end, n);
+  }
+
+  constexpr value_type min(const std::pair<size_type, size_type> &query) const {
+    if (query.first > query.second) {
+      throw std::runtime_error {"invalid query range"};
+    }
+
+    int i = log2_floor(query.second - query.first + 1);
+    return std::min(sparse_[i][query.first],
+                    sparse_[i][query.second - (1 << i) + 1]);
+  }
+
+ private:
+  template <std::input_iterator Iter>
+  constexpr void construct(Iter begin, Iter end, size_type n) {
     if (n == 0) return;
+
+    sparse_.resize(log2_floor(n) + 1, std::vector<value_type>(n));
 
     size_type log = log2_floor(n);
     std::transform(begin, end, sparse_[0].begin(), [](const value_type &value) {
@@ -38,17 +57,6 @@ class SparseTable final {
     }
   }
 
-  constexpr value_type min(const std::pair<size_type, size_type> &query) const {
-    if (query.first > query.second) {
-      throw std::runtime_error {"invalid query range"};
-    }
-
-    int i = log2_floor(query.second - query.first + 1);
-    return std::min(sparse_[i][query.first],
-                    sparse_[i][query.second - (1 << i) + 1]);
-  }
-
- private:
   constexpr int log2_floor(size_type number) const noexcept {
     return std::bit_width(number) - 1;
   }
