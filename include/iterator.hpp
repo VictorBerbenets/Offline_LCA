@@ -47,10 +47,10 @@ class TreeIterator final {
   }
 
   const Priority& operator*() const noexcept {
-    return static_cast<node_type*>(ptr_)->priority_;
+    return static_cast<node_type*>(ptr_)->priority();
   }
   const Priority* operator->() const noexcept {
-    return std::addressof(static_cast<node_type*>(ptr_)->priority_);
+    return std::addressof(this->operator*());
   }
 
   auto operator<=>(const TreeIterator&) const = default;
