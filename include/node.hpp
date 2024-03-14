@@ -2,10 +2,6 @@
 
 namespace yLAB {
 
-template <typename, typename> class TreeIterator;
-template <typename> class Treap;
-template <typename> class RmqSolver;
-
 namespace detail {
 
 template <typename, typename> class Node;
@@ -17,9 +13,9 @@ class BaseNode {
   BaseNode(child_type *child = nullptr): left_ {child} {}
   
   virtual ~BaseNode() {}
+  
+  auto &left() noexcept { return left_; }
 
-  template <typename> friend class yLAB::Treap;
-  template <typename, typename> friend class Node;
  protected:
    child_type *left_; 
 };
@@ -40,16 +36,16 @@ class Node final: public BaseNode<Node<Key, Priority>> {
         priority_ {priority}, parent_ {parent},
         right_ {right} {}
 
-  static Node *successor(node_type *node) {
+  static base_node *successor(node_type *node) {
     if (node->right_) {
       return get_most_left(node->right_);
     }
     return const_cast<pointer>(node->go_upper_inc());
   }
 
-  static Node *predecessor(base_node *b_node) {
-    if (b_node->left_) {
-      return get_most_right(b_node->left_);
+  static node_type *predecessor(base_node *b_node) {
+    if (b_node->left()) {
+      return get_most_right(b_node->left());
     }
     return const_cast<pointer>(static_cast<node_type*>(b_node)->go_upper_dec());
   } 
@@ -67,15 +63,17 @@ class Node final: public BaseNode<Node<Key, Priority>> {
     }
     return start;
   }
+  
+  auto &right() noexcept { return right_; }
+  auto &parent() noexcept { return parent_; }
+  auto &key() const noexcept { return key_; }
+  auto &priority() const noexcept { return priority_; }
 
-  template <typename, typename> friend class yLAB::TreeIterator;
-  template <typename> friend class yLAB::Treap;
-  template <typename> friend class yLAB::RmqSolver;
  private:
   auto go_upper_dec() const {
     auto tmp  = parent_;
     auto copy = this;
-    while (copy == tmp->left_) {
+    while (copy == tmp->left()) {
       copy = static_cast<node_type*>(std::exchange(tmp,
                                        static_cast<node_type*>(tmp)->parent_));
     }
@@ -88,7 +86,7 @@ class Node final: public BaseNode<Node<Key, Priority>> {
   auto go_upper_inc() const {
     auto tmp = parent_;
     auto copy = this;
-    while (tmp->left_ != copy &&
+    while (tmp->left() != copy &&
            copy == static_cast<node_type*>(tmp)->right_) {
       copy = static_cast<node_type*>(std::exchange(tmp,
                                        static_cast<node_type*>(tmp)->parent_));
