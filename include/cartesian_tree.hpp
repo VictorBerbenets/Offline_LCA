@@ -88,8 +88,8 @@ class Treap final {
     return result;
   }
  
-  size_type size() const noexcept { return storage_.size(); }
-  [[nodiscard]] bool empty() const noexcept { return storage_.size() == 0; }
+  size_type size() const noexcept { return storage_.size() - 1; }
+  [[nodiscard]] bool empty() const noexcept { return storage_.size() - 1 == 0; }
 
   iterator begin() const noexcept { return {begin_node_}; }
   iterator end()   const noexcept { return {end_node_};   }
