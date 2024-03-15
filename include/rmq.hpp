@@ -26,9 +26,11 @@ class RmqSolver final {
 
   template <std::input_iterator Iter>
   RmqSolver(Iter begin, Iter end) {
-    euler_tour(begin, end); 
+    euler_tour(begin, end);
+    rmq_plus_minus_1();
   }
 
+ private:
   template <std::input_iterator Iter>
   void euler_tour(Iter begin, Iter end) {
     tree_type tree (begin, end);
@@ -76,13 +78,19 @@ class RmqSolver final {
   }
 
   void rmq_plus_minus_1() {
-    size_type size = heights_.size();
     size_type block_sz = 1;
-    if (auto log = log2_floor(size); log > 2) {
+    if (auto log = log2_floor(heights_.size()); log > 2) {
       block_sz = log / 2; 
     }
 
+    build_sparse_table(block_sz);
+    precount_minimums_in_blocks(block_sz);
+  }
+ 
+  void build_sparse_table(size_type block_sz) {
+    size_type size = heights_.size();
     size_type blocks_num = size / block_sz + (size % block_sz ? 1 : 0);
+
     std::vector<size_type> blocks_mins;
     blocks_mins.reserve(blocks_num);
     block_types_.reserve(blocks_num);
@@ -107,11 +115,9 @@ class RmqSolver final {
     }
     sparse_table_.construct(blocks_mins.begin(), blocks_mins.end(),
                             blocks_mins.size());
-
-    precount_minimums_in_blocks(block_sz);
   }
- private:
-  constexpr void precount_minimums_in_blocks(size_type block_sz) {
+
+  void precount_minimums_in_blocks(size_type block_sz) {
     // we have 2^(block_sz - 1)  different blocks
     size_type diff_blocks = 1 << (block_sz - 1);
     sections_mins_.assign(diff_blocks, sq_table(block_sz,
@@ -133,8 +139,8 @@ class RmqSolver final {
     }
   }
 
-  constexpr std::vector<int> get_block_section(size_type block_id,
-                                               size_type block_sz) const noexcept {
+  std::vector<int> get_block_section(size_type block_id,
+                                     size_type block_sz) const noexcept {
     block_bits b_set(block_id);
     std::vector<int> section(block_sz, 0);
     int assign = 0;
