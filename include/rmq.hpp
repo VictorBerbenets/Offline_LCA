@@ -4,6 +4,8 @@
 #include <vector>
 #include <iterator>
 #include <utility>
+#include <climits>
+#include <bitset>
 #include <unordered_set>
 
 #include "cartesian_tree.hpp"
@@ -18,6 +20,8 @@ class RmqSolver final {
   using size_type   = std::size_t;
  private:
   using tree_type   = Treap<value_type>;
+  using sq_table    = std::vector<std::vector<size_type>>;
+  using block_bits  = std::bitset<sizeof(int) * CHAR_BIT>;
  public:
 
   template <std::input_iterator Iter>
@@ -77,6 +81,9 @@ class RmqSolver final {
     if (auto log = log2_floor(size); log > 2) {
       block_sz = log / 2; 
     }
+    std::cout << "size  = " << size << std::endl;
+    std::cout << "block = " << block_sz << std::endl;
+
     size_type blocks_num = size / block_sz + (size % block_sz ? 1 : 0);
     std::vector<size_type> blocks_mins;
     blocks_mins.reserve(blocks_num);
@@ -87,8 +94,8 @@ class RmqSolver final {
         if (heights_[id] < min) {
           min = heights_[id];
         }
-        if (block_id + 1 < block_sz) {
-          type += heights_[id] < heights_[id + 1] ? 0 : 1 << block_id;
+        if (block_id + 1 < block_sz && id + 1 < size) {
+          type += heights_[id] < heights_[id + 1] ? 1 << block_id : 0;
         }
       } else if (block_id == block_sz) {
         blocks_mins.push_back(std::exchange(min, heights_[id]));
@@ -102,6 +109,33 @@ class RmqSolver final {
     }
     sparse_table_.construct(blocks_mins.begin(), blocks_mins.end(),
                             blocks_mins.size());
+
+    // we have 2^(block_sz - 1)  different blocks
+    auto diff_blocks = 1 << (block_sz - 1);
+    sections_mins_.assign(diff_blocks, sq_table(diff_blocks));
+    for (size_type i = 0; i < diff_blocks; ++i) {
+      auto section = get_block_section(i, block_sz);
+      for (int j = 0, min = section[0]; j < diff_blocks; ++j) {
+        for (int k = j; k < diff_blocks; ++k) {
+        
+        }
+      }
+    }
+  }
+ private:
+  constexpr std::vector<int> get_block_section(size_type block_id,
+                                               size_type block_sz) const noexcept {
+    block_bits b_set(block_id);
+    std::vector<int> section(block_sz, 0);
+    int assign = 0;
+    for (size_type i = 1; i < block_sz; ++i) {
+      if (b_set[i] == 0) {
+        section[i] = --assign; 
+      } else {
+        section[i] = ++assign; 
+      }
+    }
+    return section;
   }
 
  private:
@@ -109,6 +143,7 @@ class RmqSolver final {
   std::vector<size_type> heights_;
   std::vector<size_type> first_appear_;
   std::vector<size_type> block_types_;
+  std::vector<sq_table>  sections_mins_;
   SparseTable<value_type> sparse_table_;
 };
 
