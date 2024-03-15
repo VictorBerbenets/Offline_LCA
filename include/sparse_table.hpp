@@ -29,10 +29,6 @@ class SparseTable final {
   }
 
   constexpr value_type min(const std::pair<size_type, size_type> &query) const {
-    if (query.first > query.second) {
-      throw std::runtime_error {"invalid query range"};
-    }
-
     int i = log2_floor(query.second - query.first + 1);
     return std::min(sparse_[i][query.first],
                     sparse_[i][query.second - (1 << i) + 1]);
