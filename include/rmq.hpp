@@ -30,6 +30,7 @@ class RmqSolver final {
   }
   
   value_type ans_query(const std::pair<size_type, size_type> &query) const {
+    auto [left, right] = get_blocks_position(query);
     
   }
 
@@ -79,38 +80,38 @@ class RmqSolver final {
   }
 
   void rmq_plus_minus_1() {
-    size_type block_sz = 1;
+    size_type block_sz_ = 1;
     if (auto log = log2_floor(heights_.size()); log > 2) {
-      block_sz = log / 2; 
+      block_sz_ = log / 2; 
     }
 
-    build_sparse_table(block_sz);
-    precount_minimums_in_blocks(block_sz);
+    build_sparse_table();
+    precount_minimums_in_blocks();
   }
  
-  void build_sparse_table(size_type block_sz) {
+  void build_sparse_table() {
     size_type size = heights_.size();
-    size_type blocks_num = size / block_sz + (size % block_sz ? 1 : 0);
+    size_type blocks_num = size / block_sz_ + (size % block_sz_ ? 1 : 0);
 
     std::vector<size_type> blocks_mins;
     blocks_mins.reserve(blocks_num);
     block_types_.reserve(blocks_num);
     size_type block_id = 0, block_num = 0, type = 0, min = heights_[0];
     for (size_type id = 0; id < size; ++id, ++block_id) {
-      if (block_id < block_sz) {
+      if (block_id < block_sz_) {
         if (heights_[id] < min) {
           min = heights_[id];
         }
-        if (block_id + 1 < block_sz && id + 1 < size) {
+        if (block_id + 1 < block_sz_ && id + 1 < size) {
           type += heights_[id] < heights_[id + 1] ? 1 << block_id : 0;
         }
-      } else if (block_id == block_sz) {
+      } else if (block_id == block_sz_) {
         blocks_mins.push_back(std::exchange(min, heights_[id]));
         block_types_[block_num++] = type;
         block_id = 0;
       }
     }
-    if (block_id != block_sz + 1) {
+    if (block_id != block_sz_ + 1) {
       blocks_mins.push_back(min);
       block_types_[block_num] = type;
     }
@@ -118,17 +119,17 @@ class RmqSolver final {
                             blocks_mins.size());
   }
 
-  void precount_minimums_in_blocks(size_type block_sz) {
+  void precount_minimums_in_blocks() {
     // we have 2^(block_sz - 1)  different blocks
-    size_type diff_blocks = 1 << (block_sz - 1);
-    sections_mins_.assign(diff_blocks, sq_table(block_sz,
-                                                std::vector<size_type>(block_sz)));
+    size_type diff_blocks = 1 << (block_sz_ - 1);
+    sections_mins_.assign(diff_blocks, sq_table(block_sz_,
+                                                std::vector<size_type>(block_sz_)));
     for (size_type i = 0; i < diff_blocks; ++i) {
-      auto section = get_block_section(i, block_sz);
-      for (size_type j = 0; j < block_sz; ++j) {
+      auto section = get_block_section(i);
+      for (size_type j = 0; j < block_sz_; ++j) {
         int min = section[j], min_id = j;
         sections_mins_[i][j][j] = j;
-        for (size_type k = j + 1; k < block_sz; ++k) {
+        for (size_type k = j + 1; k < block_sz_; ++k) {
           if (min < section[k]) {
             sections_mins_[i][j][k] = min_id;
           } else {
@@ -140,12 +141,11 @@ class RmqSolver final {
     }
   }
 
-  std::vector<int> get_block_section(size_type block_id,
-                                     size_type block_sz) const noexcept {
+  std::vector<int> get_block_section(size_type block_id) const noexcept {
     block_bits b_set(block_id);
-    std::vector<int> section(block_sz, 0);
+    std::vector<int> section(block_sz_, 0);
     int assign = 0;
-    for (size_type i = 1; i < block_sz; ++i) {
+    for (size_type i = 1; i < block_sz_; ++i) {
       if (b_set[i - 1] == 0) {
         section[i] = --assign; 
       } else {
@@ -153,6 +153,12 @@ class RmqSolver final {
       }
     }
     return section;
+  }
+ 
+  std::pair<size_type, size_type>
+  get_blocks_position(const std::pair<size_type, size_type> &query) const {
+    return std::make_pair(query.first < block_sz_ ? 0 : block_sz_ / heights_[query.first],
+                          query.second < block_sz_ ? 0 : block_sz_ / heights_[query.second]);
   }
 
  private:
@@ -162,6 +168,7 @@ class RmqSolver final {
   std::vector<size_type> block_types_;
   std::vector<sq_table>  sections_mins_;
   SparseTable<value_type> sparse_table_;
+  size_type block_sz_;
 };
 
 } // <--- namespace yLAB
