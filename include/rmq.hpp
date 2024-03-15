@@ -32,7 +32,7 @@ class RmqSolver final {
   template <std::input_iterator Iter>
   void euler_tour(Iter begin, Iter end) {
     tree_type tree (begin, end);
-	  if (!tree.root_) { return ; }
+    if (!tree.root_) { return ; }
 
     auto vertex_num      = tree.size();
     auto euler_tour_size = 2 * vertex_num - 1;
@@ -81,8 +81,6 @@ class RmqSolver final {
     if (auto log = log2_floor(size); log > 2) {
       block_sz = log / 2; 
     }
-    std::cout << "size  = " << size << std::endl;
-    std::cout << "block = " << block_sz << std::endl;
 
     size_type blocks_num = size / block_sz + (size % block_sz ? 1 : 0);
     std::vector<size_type> blocks_mins;
@@ -110,26 +108,38 @@ class RmqSolver final {
     sparse_table_.construct(blocks_mins.begin(), blocks_mins.end(),
                             blocks_mins.size());
 
+    precount_minimums_in_blocks(block_sz);
+  }
+ private:
+  constexpr void precount_minimums_in_blocks(size_type block_sz) {
     // we have 2^(block_sz - 1)  different blocks
-    auto diff_blocks = 1 << (block_sz - 1);
-    sections_mins_.assign(diff_blocks, sq_table(diff_blocks));
+    size_type diff_blocks = 1 << (block_sz - 1);
+    sections_mins_.assign(diff_blocks, sq_table(block_sz,
+                                                std::vector<size_type>(block_sz)));
     for (size_type i = 0; i < diff_blocks; ++i) {
       auto section = get_block_section(i, block_sz);
-      for (int j = 0, min = section[0]; j < diff_blocks; ++j) {
-        for (int k = j; k < diff_blocks; ++k) {
-        
+      for (size_type j = 0; j < block_sz; ++j) {
+        int min = section[j], min_id = j;
+        sections_mins_[i][j][j] = j;
+        for (size_type k = j + 1; k < block_sz; ++k) {
+          if (min < section[k]) {
+            sections_mins_[i][j][k] = min_id;
+          } else {
+            sections_mins_[i][j][k] = min_id = k;
+            min = section[min_id];
+          }
         }
       }
     }
   }
- private:
+
   constexpr std::vector<int> get_block_section(size_type block_id,
                                                size_type block_sz) const noexcept {
     block_bits b_set(block_id);
     std::vector<int> section(block_sz, 0);
     int assign = 0;
     for (size_type i = 1; i < block_sz; ++i) {
-      if (b_set[i] == 0) {
+      if (b_set[i - 1] == 0) {
         section[i] = --assign; 
       } else {
         section[i] = ++assign; 
