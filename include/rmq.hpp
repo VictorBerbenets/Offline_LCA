@@ -30,10 +30,19 @@ class RmqSolver final {
   }
   
   value_type ans_query(const std::pair<size_type, size_type> &query) const {
-    auto [left, right] = get_blocks_position(query);
-    if (left != right) {
-      
+    auto [left_id, right_id] = get_heights_positions(query);
+    auto fst_block = left_id / block_sz_, sec_block = right_id / block_sz_;
+
+    auto left_min   = sections_mins_[block_types_[fst_block]][left_id % block_sz_][block_sz_ - 1];
+    auto right_min  = sections_mins_[block_types_[sec_block]][0][right_id % block_sz_];
+    if (fst_block != sec_block) {
+      auto middle_min = sparse_table_[fst_block][sec_block];
+
+      return std::min({get_val(left_min), get_val(right_min), get_val(middle_min)});
     }
+    auto block_min = sections_mins_[block_types_[fst_block]][left_min][right_min];
+
+    return get_val(block_min);
   }
 
  private:
@@ -157,9 +166,12 @@ class RmqSolver final {
   }
  
   std::pair<size_type, size_type>
-  get_blocks_position(const std::pair<size_type, size_type> &query) const {
-    return std::make_pair(query.first < block_sz_ ? 0 : block_sz_ / heights_[query.first],
-                          query.second < block_sz_ ? 0 : block_sz_ / heights_[query.second]);
+  get_heights_positions(const std::pair<size_type, size_type> &query) const {
+    return std::make_pair(heights_[query.first], heights_[query.second]);
+  }
+
+  value_type get_val(size_type height_id) const {
+    return euler_tour_[heights_[height_id]]; 
   }
 
  private:
