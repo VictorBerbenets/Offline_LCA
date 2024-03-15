@@ -31,7 +31,9 @@ class RmqSolver final {
   
   value_type ans_query(const std::pair<size_type, size_type> &query) const {
     auto [left, right] = get_blocks_position(query);
-    
+    if (left != right) {
+      
+    }
   }
 
  private:
@@ -80,7 +82,6 @@ class RmqSolver final {
   }
 
   void rmq_plus_minus_1() {
-    size_type block_sz_ = 1;
     if (auto log = log2_floor(heights_.size()); log > 2) {
       block_sz_ = log / 2; 
     }
@@ -168,7 +169,7 @@ class RmqSolver final {
   std::vector<size_type> block_types_;
   std::vector<sq_table>  sections_mins_;
   SparseTable<value_type> sparse_table_;
-  size_type block_sz_;
+  size_type block_sz_ {1};
 };
 
 } // <--- namespace yLAB
