@@ -6,7 +6,6 @@
 #include <utility>
 #include <climits>
 #include <bitset>
-#include <unordered_map>
 
 #include "cartesian_tree.hpp"
 #include "sparse_table.hpp"
@@ -31,7 +30,7 @@ class RmqSolver final {
   }
   
   value_type ans_query(const std::pair<size_type, size_type> &query) const {
-
+    
   }
 
  private:
@@ -44,16 +43,15 @@ class RmqSolver final {
     auto euler_tour_size = 2 * vertex_num - 1;
     euler_tour_.reserve(euler_tour_size);
     heights_.reserve(euler_tour_size);
-    first_appear_.reserve(vertex_num);
+    first_appear_.assign(vertex_num, -1);
 
     std::stack<std::pair<typename tree_type::pointer, int>> stack;
 
     auto curr_pair = std::make_pair(tree.root_, 0);
     // for state: 0 => initial visit, 1 => just did left, 2 => just did right
     for (size_type state {0}, path {0}; curr_pair.first; ++path) {
-      if (auto key = curr_pair.first->key();
-                              first_appear_.find(key) == first_appear_.end()) {
-        first_appear_.insert({key, path});
+      if (auto key = curr_pair.first->key(); first_appear_[key] == -1) {
+        first_appear_[key] = path;
       }
       euler_tour_.push_back(curr_pair.first->priority());
       heights_.push_back(curr_pair.second);
@@ -159,11 +157,11 @@ class RmqSolver final {
 
  private:
   std::vector<value_type> euler_tour_;
+  std::vector<int64_t> first_appear_;
   std::vector<size_type> heights_;
   std::vector<size_type> block_types_;
   std::vector<sq_table>  sections_mins_;
   SparseTable<value_type> sparse_table_;
-  std::unordered_map<value_type, size_type> first_appear_;
 };
 
 } // <--- namespace yLAB
