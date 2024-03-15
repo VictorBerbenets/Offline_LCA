@@ -6,7 +6,7 @@
 #include <utility>
 #include <climits>
 #include <bitset>
-#include <unordered_set>
+#include <unordered_map>
 
 #include "cartesian_tree.hpp"
 #include "sparse_table.hpp"
@@ -29,6 +29,10 @@ class RmqSolver final {
     euler_tour(begin, end);
     rmq_plus_minus_1();
   }
+  
+  value_type ans_query(const std::pair<size_type, size_type> &query) const {
+
+  }
 
  private:
   template <std::input_iterator Iter>
@@ -42,15 +46,14 @@ class RmqSolver final {
     heights_.reserve(euler_tour_size);
     first_appear_.reserve(vertex_num);
 
-    std::unordered_set<typename tree_type::key_type> visited;
     std::stack<std::pair<typename tree_type::pointer, int>> stack;
 
     auto curr_pair = std::make_pair(tree.root_, 0);
     // for state: 0 => initial visit, 1 => just did left, 2 => just did right
     for (size_type state {0}, path {0}; curr_pair.first; ++path) {
-      if (visited.find(curr_pair.first->key()) == visited.end()) {
-        visited.insert(curr_pair.first->key());
-        first_appear_.push_back(path);
+      if (auto key = curr_pair.first->key();
+                              first_appear_.find(key) == first_appear_.end()) {
+        first_appear_.insert({key, path});
       }
       euler_tour_.push_back(curr_pair.first->priority());
       heights_.push_back(curr_pair.second);
@@ -155,12 +158,12 @@ class RmqSolver final {
   }
 
  private:
-  std::vector<size_type> euler_tour_;
+  std::vector<value_type> euler_tour_;
   std::vector<size_type> heights_;
-  std::vector<size_type> first_appear_;
   std::vector<size_type> block_types_;
   std::vector<sq_table>  sections_mins_;
   SparseTable<value_type> sparse_table_;
+  std::unordered_map<value_type, size_type> first_appear_;
 };
 
 } // <--- namespace yLAB
