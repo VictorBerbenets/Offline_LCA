@@ -12,7 +12,7 @@ class BaseNode {
  public:
   BaseNode(child_type *child = nullptr): left_ {child} {}
   
-  virtual ~BaseNode() {}
+  virtual ~BaseNode() = default;
   
   auto &left() noexcept { return left_; }
 
