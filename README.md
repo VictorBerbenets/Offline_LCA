@@ -58,5 +58,5 @@ bash ../tests/end2end/test_runner.sh <tests_directory> <answers_directory>
 ***answers_directory*** - directory with the answers.  
 By default tests and answers will be launched from the `tests/end2end/resources` directory.
 > Note: tests should be named like this: test[i], and the answers to them:
-        answers[i], where i is the test number
+        answer[i], where i is the test number
 
