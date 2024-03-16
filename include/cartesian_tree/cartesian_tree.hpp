@@ -17,6 +17,12 @@ namespace dt = detail;
 
 template <typename> class RmqSolver;
 
+/*
+ * This Trep class contains an incomplete interface (or rather,
+ * it is completely absent). Its main purpose is to simply build
+ * a Cartesian tree and be able to traverse it in the RmqSolver class.
+*/
+
 template <typename T>
 class Treap final {
  public:
