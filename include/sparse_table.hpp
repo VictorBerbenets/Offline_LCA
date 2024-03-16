@@ -12,7 +12,7 @@
 namespace yLAB {
 
 template <typename T>
-class SparseTable final {
+class SparseTable {
  public:
   using size_type   = std::size_t;
   using value_type  = T;
@@ -27,9 +27,12 @@ class SparseTable final {
   constexpr SparseTable(Iter begin, Iter end, size_type n) {
     construct(begin, end, n);
   }
+  
+  virtual ~SparseTable() = default;
 
   constexpr value_type min(const std::pair<size_type, size_type> &query) const {
     int i = log2_floor(query.second - query.first + 1);
+ 
     return std::min(sparse_[i][query.first],
                     sparse_[i][query.second - (1 << i) + 1]);
   }
@@ -38,9 +41,9 @@ class SparseTable final {
   constexpr void construct(Iter begin, Iter end, size_type n) {
     if (n == 0) return;
 
-    sparse_.resize(log2_floor(n) + 1, std::vector<value_type>(n));
-
     size_type log = log2_floor(n);
+    sparse_.resize(log + 1, std::vector<value_type>(n));
+
     std::transform(begin, end, sparse_[0].begin(), [](const value_type &value) {
       return value;
     });
@@ -53,7 +56,7 @@ class SparseTable final {
     }
   }
 
- private:
+ protected:
   sparse_type sparse_;
 };
 
