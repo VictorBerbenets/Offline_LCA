@@ -36,7 +36,7 @@ class RmqSolver final: protected SparseTable<std::size_t> {
     rmq_plus_minus_1();
   }
 
-  value_type ans_query(const std::pair<size_type, size_type> &query) {
+  value_type ans_query(const std::pair<size_type, size_type> &query) const {
     auto [left_id, right_id] = get_heights_positions(query);
     if (left_id > right_id) {
       std::swap(left_id, right_id);
