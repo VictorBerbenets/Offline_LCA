@@ -27,11 +27,11 @@ The program will be waiting for input data in stdin in such way:
 ```bash
 <k> num1 <k> num2 <k> ... <q> l1 r1 <q> l2 r2 ...
 ```
-Here k are the elements of the array, and q are the rmq themselves.  
+Here `k` are the elements of the array, and `q` are the rmq themselves.  
 At the end the program displays answers to all queries. Example:  
 input:
-k 1 k -1 k 2 k 0 k 5 q 0 0 q 0 1 q 0 3 q 4 4
-output:
+k 1 k -1 k 2 k 0 k 5 q 0 0 q 0 1 q 0 3 q 4 4  
+output:  
 1 -1 -1 5
 ## How to run tests:
 ### You can run unit tests:
@@ -48,7 +48,7 @@ bash ../tests/end2end/test_generator.sh <tests_number> <min> <max> <arr_sz> <que
 ***max*** - maximum number in the array.
 ***arr_sz*** - number of elements in the array.  
 ***queries_sz*** - total number of queries.  
-After running you can see a generated directory - tests/end2end/resources/.
+After running you can see a generated directory - `tests/end2end/resources/`.
 There will be the tests themselves and the answers to them.
 #### To run end2end tests do:
 ```bash
@@ -56,7 +56,7 @@ bash ../tests/end2end/test_runner.sh <tests_directory> <answers_directory>
 ```
 ***tests_directory*** - directory with tests.  
 ***answers_directory*** - directory with the answers.  
-By default tests will be launched from the tests/end2end/resources directory.
+By default tests and answers will be launched from the `tests/end2end/resources` directory.
 > Note: tests should be named like this: test[i], and the answers to them:
         answers[i], where i is the test number
 
