@@ -8,6 +8,8 @@
 #include <utility>
 #include <string>
 
+#include "sparse_table.hpp"
+
 namespace testing {
 
 namespace dirs {
@@ -55,8 +57,31 @@ class generator final {
       }
   }
 
-  void generate_array_and_queries() {
+  void generate_array_and_queries(size_type test_number) { 
+    std::string test_name = "test" + std::to_string(test_number) + ".txt";
+    std::string ans_name  = "answer" + std::to_string(test_number) + ".txt";
+    std::ofstream test_file {dirs::tests_dir + test_name};
+    std::ofstream ans_file  {dirs::ans_dir + ans_name};
     
+    // generating array
+    std::vector<int64_t> array(array_size_);
+    std::generate(array.begin(), array.end(), random_value(min_value_, max_value_));
+    for (auto &&v : array) {
+      test_file << "k " << v << ' ';
+    }
+    // generating queries
+    std::vector<std::pair<size_type, size_type>> queries(queries_num_);
+    std::generate(array.begin(), array.end(), [size = array.size()] {
+                       auto l = random_value(0, size);
+                       auto r = random_value(l, size);
+                       return std::make_pair(l, r);
+                  });
+    // generating answers with sparse table
+    yLAB::SparseTable<int64_t> sparse_table(array.begin(), array.end(), array.size());
+    std::transform(queries.begin(), queries.end(), std::ostream_iterator<int64_t>(ans_file, " "),
+                  [&sparse_table](auto &&pair) {
+      return  sparse_table.min(pair.first, pair.second); 
+    });
   }
 
 
@@ -88,3 +113,4 @@ class generator final {
 };
 
 } // <--- namespace testing
+
