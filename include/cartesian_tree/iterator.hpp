@@ -22,45 +22,45 @@ class TreeIterator final {
   using const_reference   = const value_type&;
   using difference_type   = std::ptrdiff_t;
 
-  TreeIterator() = default;
+  constexpr TreeIterator() = default;
 
-  TreeIterator& operator++() {
+  constexpr TreeIterator& operator++() {
     ptr_ = node_type::successor(static_cast<node_type*>(ptr_));
     return *this;
   }
 
-  TreeIterator& operator--() {
+  constexpr TreeIterator& operator--() {
     ptr_ = node_type::predecessor(ptr_);
     return *this;
   }
 
-  TreeIterator operator++(int n) {
+  constexpr TreeIterator operator++(int n) {
     auto tmp = *this;
     ++(*this);
     return tmp;
   }
 
-  TreeIterator operator--(int n) {
+  constexpr TreeIterator operator--(int n) {
     auto tmp = *this;
     --(*this);
     return tmp;
   }
 
-  const Priority& operator*() const noexcept {
+  constexpr const Priority& operator*() const noexcept {
     return static_cast<node_type*>(ptr_)->priority();
   }
-  const Priority* operator->() const noexcept {
+  constexpr const Priority* operator->() const noexcept {
     return std::addressof(this->operator*());
   }
 
-  auto operator<=>(const TreeIterator&) const = default;
+  constexpr auto operator<=>(const TreeIterator&) const = default;
 
   template<typename> friend class Treap;
  private:
 /*----------------------------------------------------------------------------------*/
   pointer ptr_ {nullptr};
 
-  TreeIterator(pointer ptr): ptr_ {ptr} {}
+  constexpr TreeIterator(pointer ptr): ptr_ {ptr} {}
 };
 
 } // <--- namespace yLAB
