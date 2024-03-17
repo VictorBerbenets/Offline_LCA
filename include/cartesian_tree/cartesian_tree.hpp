@@ -60,7 +60,7 @@ class Treap final {
       : end_node_ {create_node<base_node>(root_)} {
     if (begin == end) return ;
 
-    std::stack<node_type*> build_nodes;
+    std::stack<node_pointer> build_nodes;
     root_ = create_node<node_type>(0, *(begin++));
     build_nodes.push(root_);
     for (size_type order_num {1}; begin != end; ++begin) {
@@ -83,7 +83,7 @@ class Treap final {
         build_nodes.push(create_node<node_type>(order_num++, *begin, nullptr,
                                                 top, nullptr));
         top->parent() = build_nodes.top();
-        root_ = static_cast<node_type*>(top->parent());
+        root_ = static_cast<node_pointer>(top->parent());
       }
     }
     make_root_links();
@@ -96,9 +96,9 @@ class Treap final {
     root_ = create_node<node_type>(rhs.root_->key(), rhs.root_->priority());
 
     // level tree traversal nodes
-    std::queue<pointer> rhs_nodes;
+    std::queue<node_pointer> rhs_nodes;
     // creating nodes
-    std::queue<pointer> nodes;
+    std::queue<node_pointer> nodes;
 
     rhs_nodes.push(rhs.root_);
     nodes.push(root_);
