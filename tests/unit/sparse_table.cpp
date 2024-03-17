@@ -35,7 +35,7 @@ TEST(SparseTable, Sparse2) {
   for (int i = 0; i < ArrSize; ++i) {
     for (int j = i; j < ArrSize; ++j) {
       ASSERT_EQ(sparse_t.min({i, j}), *std::min_element(std::addressof(array[i]),
-                                                        std::addressof(array[j + 1])));      
+                                                        std::addressof(array[j + 1])));
     }
   }
 }
@@ -49,7 +49,7 @@ TEST(SparseTable, Sparse3) {
   for (int i = 0; i < ArrSize; ++i) {
     for (int j = i; j < ArrSize; ++j) {
       ASSERT_EQ(sparse_t.min({i, j}), *std::min_element(std::addressof(array[i]),
-                                                        std::addressof(array[j + 1])));      
+                                                        std::addressof(array[j + 1])));
     }
   }
 }

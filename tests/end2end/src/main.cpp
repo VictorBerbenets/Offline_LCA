@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
     throw std::runtime_error {"invalid set of arguments, expected 1 - 5, got" +
                               std::to_string(argc - 1)};
   }
-  
+
   auto test_num = std::stoul(argv[1]);
   ts::generator<int64_t> gen(test_num);
   if (argc == 2) {

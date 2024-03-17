@@ -93,7 +93,7 @@ TEST(Iterator, Distance2) {
   for (auto begin1 = tr.begin(), end = tr.end(); begin1 != end; ++begin1) {
     int distance = 0;
     for (auto begin2 = begin1; begin2 != end; ++begin2, ++distance) {
-      ASSERT_EQ(std::distance(begin1, begin2), distance); 
+      ASSERT_EQ(std::distance(begin1, begin2), distance);
     }
   }
 }

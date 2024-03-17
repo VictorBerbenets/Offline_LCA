@@ -18,7 +18,7 @@ namespace dt = detail;
 template <typename> class RmqSolver;
 
 /*
- * This Trep class contains an incomplete interface (or rather,
+ * This Treap class contains an incomplete interface (or rather,
  * it is completely absent). Its main purpose is to simply build
  * a Cartesian tree and be able to traverse it in the RmqSolver class.
 */
@@ -45,7 +45,7 @@ class Treap final {
 
   constexpr Treap()
       : end_node_ {create_node<base_node>(root_)} {}
-  
+
   Treap(std::initializer_list<value_type> i_list)
       : Treap(i_list.begin(), i_list.end()) {}
 
@@ -55,7 +55,7 @@ class Treap final {
   Treap(Iter begin, Iter end)
       : end_node_ {create_node<base_node>(root_)} {
     if (begin == end) return ;
-    
+
     std::stack<node_type*> build_nodes;
     root_ = create_node<node_type>(0, *(begin++));
     build_nodes.push(root_);
@@ -90,10 +90,10 @@ class Treap final {
     Treap result;
     result.root_ = result.merge_impl(left.root_, right.root_);
     result.make_root_links();
-    
+
     return result;
   }
- 
+
   size_type size() const noexcept { return storage_.size() - 1; }
   [[nodiscard]] bool empty() const noexcept { return storage_.size() - 1 == 0; }
 
@@ -103,10 +103,10 @@ class Treap final {
   const_iterator cend()   const noexcept { return end();   }
   reverse_iterator rbegin() const { return std::make_reverse_iterator(end());   }
   reverse_iterator rend()   const { return std::make_reverse_iterator(begin()); }
-  const_reverse_iterator crbegin() const { return rbegin();   }
-  const_reverse_iterator crend()   const { return rbegin(); } 
+  const_reverse_iterator crbegin() const { return rbegin(); }
+  const_reverse_iterator crend()   const { return rbegin(); }
  private:
-  
+
   void make_root_links() noexcept {
     end_node_->left() = root_;
 	  if (root_) {
@@ -135,9 +135,9 @@ class Treap final {
     return create_node<node_type>(right->key(), right->priority(), right->right(),
                                   new_left, right);
   }
-  
+
   std::pair<node_type*, node_type*> split(node_type *node, size_type key) {
-    if (!node) { return {nullptr, nullptr}; }	
+    if (!node) { return {nullptr, nullptr}; }
 
     if (node->key() <= key) {
       auto [left, right] = split(node->right(), key);

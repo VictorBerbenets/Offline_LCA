@@ -11,13 +11,13 @@ class BaseNode {
   using child_type = NodeType;
  public:
   BaseNode(child_type *child = nullptr): left_ {child} {}
-  
+
   virtual ~BaseNode() = default;
-  
+
   auto &left() noexcept { return left_; }
 
  protected:
-   child_type *left_; 
+   child_type *left_;
 };
 
 template <typename Key, typename Priority>
@@ -48,7 +48,7 @@ class Node final: public BaseNode<Node<Key, Priority>> {
       return get_most_right(b_node->left());
     }
     return const_cast<pointer>(static_cast<node_type*>(b_node)->go_upper_dec());
-  } 
+  }
 
   static auto get_most_right(pointer start) noexcept {
     while(start->right_) {
@@ -63,7 +63,7 @@ class Node final: public BaseNode<Node<Key, Priority>> {
     }
     return start;
   }
-  
+
   auto &right() noexcept { return right_; }
   auto &parent() noexcept { return parent_; }
   auto &key() const noexcept { return key_; }
@@ -99,7 +99,7 @@ class Node final: public BaseNode<Node<Key, Priority>> {
  private:
   key_type key_;
   priority_type priority_;
-  
+
   base_node *parent_;
   node_type *right_;
 };

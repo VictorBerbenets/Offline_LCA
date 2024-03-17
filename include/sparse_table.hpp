@@ -17,7 +17,7 @@ class SparseTable {
   using size_type   = std::size_t;
   using value_type  = T;
   using sparse_type = std::vector<std::vector<value_type>>;
-  
+
   constexpr SparseTable() = default;
 
   constexpr SparseTable(std::initializer_list<value_type> i_list)
@@ -27,12 +27,12 @@ class SparseTable {
   constexpr SparseTable(Iter begin, Iter end, size_type n) {
     construct(begin, end, n);
   }
-  
+
   virtual ~SparseTable() = default;
 
   constexpr value_type min(const std::pair<size_type, size_type> &query) const {
     int i = log2_floor(query.second - query.first + 1);
- 
+
     return std::min(sparse_[i][query.first],
                     sparse_[i][query.second - (1 << i) + 1]);
   }

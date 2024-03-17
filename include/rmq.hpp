@@ -26,7 +26,7 @@ class RmqSolver final: protected SparseTable<std::size_t> {
   using sparse_table = SparseTable<size_type>;
   using sparse_table::sparse_;
  public:
- 
+
   RmqSolver(std::initializer_list<value_type> i_list)
       : RmqSolver(i_list.begin(), i_list.end()) {}
 
@@ -54,7 +54,7 @@ class RmqSolver final: protected SparseTable<std::size_t> {
    }
    // find the minimum on the segment from l to the end of the block containing l
    auto ansl = block_rmq(left_block, query.first % block_sz_, block_sz_ - 1);
-   // find the minimum from the beginning of the block containing r to r 
+   // find the minimum from the beginning of the block containing r to r
    auto ansr = block_rmq(right_block, 0, query.second % block_sz_);
    // find the minimum on the blocks between the outer ones, if there are any
    if (left_block + 1 < right_block) {
@@ -112,16 +112,16 @@ class RmqSolver final: protected SparseTable<std::size_t> {
 
   void rmq_plus_minus_1() {
     if (auto log = log2_floor(heights_.size()); log > 2) {
-      block_sz_ = log / 2; 
+      block_sz_ = log / 2;
     }
-    
+
     auto min_blocks_pos = get_min_pos_in_each_block();
     build_sparse_table(min_blocks_pos.begin(), min_blocks_pos.end(),
                        min_blocks_pos.size());
     precompute_all_blocks_rmq();
     compute_each_block_type();
   }
- 
+
   std::vector<int> get_min_pos_in_each_block() {
     size_type size = heights_.size();
     size_type blocks_num = size / block_sz_ + (size % block_sz_ ? 1 : 0);
@@ -139,7 +139,7 @@ class RmqSolver final: protected SparseTable<std::size_t> {
     }
     return blocks_mins;
   }
- 
+
   void compute_each_block_type() {
     for (size_type i = 0, j = 0, curr_block = 0, size = heights_.size();
          i < size || j < block_sz_; ++i, ++j) {
@@ -173,12 +173,12 @@ class RmqSolver final: protected SparseTable<std::size_t> {
       }
     }
   }
-  
+
   template <std::input_iterator Iter>
   void build_sparse_table(Iter begin, Iter end, size_type size) {
     size_type log = log2_floor(heights_.size());
     sparse_.resize(size, std::vector<size_type>(log + 1));
- 
+
     for (int i = 0; begin != end; ++begin, ++i) {
       sparse_[i][0] = *begin;
     }
@@ -204,14 +204,14 @@ class RmqSolver final: protected SparseTable<std::size_t> {
     int assign = 0;
     for (size_type i = 1; i < block_sz_; ++i) {
       if (b_set[i - 1] == 0) {
-        section[i] = --assign; 
+        section[i] = --assign;
       } else {
-        section[i] = ++assign; 
+        section[i] = ++assign;
       }
     }
     return section;
   }
- 
+
   size_type min(size_type l, size_type r) const {
     return heights_[l] < heights_[r] ? l : r;
   }
@@ -219,7 +219,7 @@ class RmqSolver final: protected SparseTable<std::size_t> {
   size_type block_rmq(size_type block_num, size_type l, size_type r) const {
     return sections_mins_[block_types_[block_num]][l][r] + block_num * block_sz_;
   }
- 
+
   std::pair<size_type, size_type>
   get_heights_positions(const std::pair<size_type, size_type> &query) const {
     return std::make_pair(first_appear_[query.first],

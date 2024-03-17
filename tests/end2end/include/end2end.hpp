@@ -24,7 +24,7 @@ class generator final {
   using value_type        = T;
   using generator_type    = std::mt19937;
   using distribution_type = std::uniform_int_distribution<T>;
-  
+
   static constexpr int64_t MIN_VALUE                = 0;
   static constexpr int64_t MAX_VALUE                = 100000000;
   static constexpr size_type DEFAULT_SIZE           = 10000000;
@@ -57,12 +57,12 @@ class generator final {
     }
   }
 
-  void generate_array_and_queries(size_type test_number) { 
+  void generate_array_and_queries(size_type test_number) {
     std::string test_name = "test" + std::to_string(test_number) + ".txt";
     std::string ans_name  = "answer" + std::to_string(test_number) + ".txt";
     std::ofstream test_file {dirs::tests_dir + test_name};
     std::ofstream ans_file  {dirs::ans_dir + ans_name};
-    
+
     // generating array
     array_size_ = (array_size_ == 0 ? 1 : array_size_);
     std::vector<int64_t> array(array_size_);
@@ -78,13 +78,13 @@ class generator final {
                        return std::make_pair(l, r);
                   });
     for (auto &&[l, r] : queries) {
-      test_file << "q " << l << ' ' << r << ' '; 
+      test_file << "q " << l << ' ' << r << ' ';
     }
     // generating answers with sparse table
     yLAB::SparseTable<int64_t> sparse_table(array.begin(), array.end(), array.size());
     std::transform(queries.begin(), queries.end(), std::ostream_iterator<int64_t>(ans_file, " "),
                   [&sparse_table](auto &&pair) {
-      return  sparse_table.min({pair.first, pair.second}); 
+      return  sparse_table.min({pair.first, pair.second});
     });
   }
 
@@ -108,7 +108,7 @@ class generator final {
 
  private:
   size_type tests_number_;
-  int64_t min_value_; 
+  int64_t min_value_;
   int64_t max_value_;
   size_type array_size_;
   size_type queries_num_;
