@@ -29,7 +29,7 @@ The program will be waiting for input data in stdin in such way:
 ```
 Here `k` are the elements of the array, and `q` are the rmq themselves.  
 At the end the program displays answers to all queries. Example:  
-input:
+input:  
 k 1 k -1 k 2 k 0 k 5 q 0 0 q 0 1 q 0 3 q 4 4  
 output:  
 1 -1 -1 5
