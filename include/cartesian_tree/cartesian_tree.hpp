@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <stack>
+#include <queue>
 #include <iterator>
 #include <concepts>
 #include <cstddef>
@@ -85,6 +86,61 @@ class Treap final {
     make_root_links();
   }
 
+  Treap(const Treap &rhs)
+      : end_node_ {create_node<base_node>(root_)} {
+    if (!rhs.size()) { return ; }
+ 
+    root_ = create_node<node_type>(rhs.root_->key(), rhs.root_->priority());
+
+    // level tree traversal nodes
+    std::queue<pointer> rhs_nodes;
+    // creating nodes
+    std::queue<pointer> nodes;
+
+    rhs_nodes.push(rhs.root_);
+    nodes.push(root_);
+    while(rhs_nodes.size()) {
+      auto parent   = nodes.front();
+      auto rhs_node = rhs_nodes.front();
+      if (rhs_node->left()) {
+        parent->left() = create_node<node_type>(rhs_node->left()->key(),
+                                                rhs_node->left()->priority());
+        parent->left()->parent() = parent;
+        rhs_nodes.push(rhs_node->left());
+        nodes.push(parent->left());
+      }
+      if (rhs_node->right()) {
+        parent->right() = create_node<node_type>(rhs_node->right()->key(),
+                                                 rhs_node->right()->priority());
+        parent->right()->parent() = parent;
+        rhs_nodes.push(rhs_node->right());
+        nodes.push(parent->right());
+      }
+      rhs_nodes.pop();
+      nodes.pop();
+    }
+    make_root_links();
+  }
+  
+  Treap(Treap &&rhs) = default;
+  
+  Treap &operator=(const Treap &rhs) {
+    if (this == std::addressof(rhs)) {
+      return *this;
+    }
+    auto copy = rhs;
+    swap(copy);
+    return *this;
+  }
+
+  Treap &operator=(Treap &&rhs) noexcept {
+    swap(rhs);
+
+    return *this;
+  }
+
+  ~Treap() = default;
+
   // it works only if all keys in right are bigger than in left
   static Treap merge(const Treap &left, const Treap &right) {
     Treap result;
@@ -92,6 +148,13 @@ class Treap final {
     result.make_root_links();
 
     return result;
+  }
+
+  void swap(Treap &rhs) noexcept {
+    std::swap(root_, rhs.root_);
+    std::swap(begin_node_, rhs.begin_node_);
+    std::swap(end_node_, rhs.end_node_);
+    storage_.swap(rhs.storage_);
   }
 
   size_type size() const noexcept { return storage_.size() - 1; }
