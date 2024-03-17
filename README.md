@@ -52,8 +52,9 @@ After running you can see a generated directory - `tests/end2end/resources/`.
 There will be the tests themselves and the answers to them.
 #### To run end2end tests do:
 ```bash
-bash ../tests/end2end/test_runner.sh <tests_directory> <answers_directory>
+bash ../tests/end2end/test_runner.sh <test_nu> <tests_directory> <answers_directory>
 ```
+***test_num*** - number of tests you want to run(must be correct number)  
 ***tests_directory*** - directory with tests.  
 ***answers_directory*** - directory with the answers.  
 By default tests and answers will be launched from the `tests/end2end/resources` directory.
