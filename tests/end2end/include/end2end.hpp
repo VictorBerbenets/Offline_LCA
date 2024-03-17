@@ -7,15 +7,20 @@
 #include <filesystem>
 #include <utility>
 #include <string>
+#include <string_view>
 
 #include "sparse_table.hpp"
 
 namespace testing {
 
 namespace dirs {
-  const std::string resource_dir = "../tests/end2end/resources";
-  const std::string tests_dir    = "../tests/end2end/resources/tests/";
-  const std::string ans_dir      = "../tests/end2end/resources/answers/";
+  inline std::string to_string(std::string_view view) {
+    return {view.begin(), view.end()};
+  }
+
+  constexpr std::string_view resource_dir = "../tests/end2end/resources";
+  constexpr std::string_view tests_dir    = "../tests/end2end/resources/tests/";
+  constexpr std::string_view ans_dir      = "../tests/end2end/resources/answers/";
 }
 
 template<std::integral T>
@@ -60,8 +65,8 @@ class generator final {
   void generate_array_and_queries(size_type test_number) {
     std::string test_name = "test" + std::to_string(test_number) + ".txt";
     std::string ans_name  = "answer" + std::to_string(test_number) + ".txt";
-    std::ofstream test_file {dirs::tests_dir + test_name};
-    std::ofstream ans_file  {dirs::ans_dir + ans_name};
+    std::ofstream test_file {dirs::to_string(dirs::tests_dir) + test_name};
+    std::ofstream ans_file  {dirs::to_string(dirs::ans_dir) + ans_name};
 
     // generating array
     array_size_ = (array_size_ == 0 ? 1 : array_size_);
