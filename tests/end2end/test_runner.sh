@@ -68,7 +68,7 @@ then
 elif [ $# -ne 1 ]
 then
     error="true"
-    echo -e "${red}invalid number of arguments: expected 2 or 0, got $#"
+    echo -e "${red}invalid number of arguments: expected 3 or 1, got $#"
 else
   tests_number=$1
 fi
