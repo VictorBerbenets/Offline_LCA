@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "rmq.hpp"
+#include "cartesian_tree.hpp"
 
 namespace {
 
@@ -49,25 +50,24 @@ TEST(RMQ, RMQ6) {
   std::vector<int> v(Size);
   std::iota(v.begin(), v.end(), -50);
   RmqSolver rmq_solver(v.begin(), v.end());
+  SparseTable sparse(v.begin(), v.end(), v.size());
   for (int i = 0; i < Size; ++i) {
     for (int j = i; j < Size; ++j) {
-      ASSERT_EQ(rmq_solver.ans_query({i, j}), *std::min_element(std::addressof(v[i]),
-                                                                std::addressof(v[j + 1])));
+      ASSERT_EQ(rmq_solver.ans_query({i, j}), sparse.min({i, j}));
     }
   }
 }
 
 TEST(RMQ, RMQ7) {
-  static constexpr int Size = 1000;
+  static constexpr int Size = 10000;
   std::vector<int> v(Size);
   // random numbers
   std::generate(v.begin(), v.end(), [] { return dice(-100000, 100000); });
   RmqSolver rmq_solver(v.begin(), v.end());
+  SparseTable sparse(v.begin(), v.end(), v.size());
   for (int i = 0; i < Size; ++i) {
     for (int j = i; j < Size; ++j) {
-      ASSERT_EQ(rmq_solver.ans_query({i, j}), *std::min_element(std::addressof(v[i]),
-                                                                std::addressof(v[j + 1])));
+      ASSERT_EQ(rmq_solver.ans_query({i, j}), sparse.min({i, j}));
     }
   }
 }
-
