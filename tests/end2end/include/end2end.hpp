@@ -108,10 +108,10 @@ class generator final {
 
  private:
   size_type tests_number_;
-  int64_t min_value_     = MIN_VALUE;
-  int64_t max_value_     = MAX_VALUE;
-  size_type array_size_  = DEFAULT_SIZE;
-  size_type queries_num_ = DEFAULT_QUERIES_NUMBER;
+  int64_t min_value_; 
+  int64_t max_value_;
+  size_type array_size_;
+  size_type queries_num_;
   generator_type generator_;
 };
 
