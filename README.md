@@ -45,7 +45,7 @@ output:
 ```
 ***tests_number*** - the number of tests you want to generate.  
 ***min*** - minimum number in the array.  
-***max*** - maximum number in the array.
+***max*** - maximum number in the array.  
 ***arr_sz*** - number of elements in the array.  
 ***queries_sz*** - total number of queries.  
 After running you can see a generated directory - `tests/end2end/resources/`.
