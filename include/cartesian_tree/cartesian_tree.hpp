@@ -42,6 +42,9 @@ class Treap final {
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
  private:
   using base_node = node_type::base_node;
+
+  using node_pointer      = typename base_node::node_pointer;
+  using base_node_pointer = typename base_node::base_node_pointer;
  public:
 
   constexpr Treap()
@@ -61,7 +64,7 @@ class Treap final {
     root_ = create_node<node_type>(0, *(begin++));
     build_nodes.push(root_);
     for (size_type order_num {1}; begin != end; ++begin) {
-      node_type *top = nullptr;
+      node_pointer top = nullptr;
       while (!build_nodes.empty()) {
         top = build_nodes.top();
         if (top->priority() < *begin) {
@@ -185,7 +188,7 @@ class Treap final {
     return static_cast<NodeType*>(storage_.back().get());
   }
 
-  node_type *merge_impl(node_type *left, node_type *right) {
+  node_pointer merge_impl(node_pointer left, node_pointer right) {
     if (!left)  { return right; }
     if (!right) { return left;  }
 
@@ -199,7 +202,7 @@ class Treap final {
                                   new_left, right);
   }
 
-  std::pair<node_type*, node_type*> split(node_type *node, size_type key) {
+  std::pair<node_pointer, node_pointer> split(node_pointer node, size_type key) {
     if (!node) { return {nullptr, nullptr}; }
 
     if (node->key() <= key) {
@@ -217,9 +220,9 @@ class Treap final {
  private:
   std::vector<std::unique_ptr<base_node>> storage_;
 
-  node_type *root_ {nullptr};
-  base_node *end_node_;
-  base_node *begin_node_ {end_node_};
+  node_pointer root_ {nullptr};
+  base_node_pointer end_node_;
+  base_node_pointer begin_node_ {end_node_};
 };
 
 template <std::input_iterator Iter>
