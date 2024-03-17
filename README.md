@@ -41,7 +41,7 @@ output:
 ### Or you can run end2end tests:
 #### In that case you can generate end2end tests do:
 ```bash
-bash ../tests/end2end/test_generator.sh <tests_number> <min> <max> <arr_sz> <queries_sz>
+./tests/end2end <tests_number> <min> <max> <arr_sz> <queries_sz>
 ```
 ***tests_number*** - the number of tests you want to generate.  
 ***min*** - minimum number in the array.  
