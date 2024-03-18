@@ -25,14 +25,14 @@ namespace rgs = std::ranges;
 
 TEST(Iterator, PrevMethod1) {
   Treap tr {1};
-  ASSERT_EQ(*std::prev(tr.end()), 1);
+  ASSERT_EQ(std::prev(tr.end())->second, 1);
 }
 
 TEST(Iterator, PrevMethod2) {
   std::set<int> set {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   Treap tr(set.begin(), set.end());
   for (auto begin = tr.end(); auto &&v : set | std::views::reverse) {
-    ASSERT_EQ(*std::prev(begin--), v);
+    ASSERT_EQ((--begin)->second, v);
   }
 }
 
@@ -43,13 +43,13 @@ TEST(Iterator, PrevMethod3) {
   }
   Treap<int> tr(set.begin(), set.end());
   for (auto begin = tr.end(); auto &&v : set | std::views::reverse) {
-    ASSERT_EQ(*std::prev(begin--), v);
+    ASSERT_EQ((--begin)->second, v);
   }
 }
 
 TEST(Iterator, NextMethod1) {
   Treap tr {1, 2};
-  ASSERT_EQ(*std::next(tr.begin()), 2);
+  ASSERT_EQ(std::next(tr.begin())->second, 2);
 }
 
 TEST(Iterator, NextMethod2) {
@@ -59,7 +59,7 @@ TEST(Iterator, NextMethod2) {
   auto end = tr.cend();
   for (auto st_begin = set.cbegin(), st_end = set.cend(); st_begin != st_end; ++st_begin) {
     if (auto next = std::next(begin++); next != end) {
-      ASSERT_EQ(*next, *std::next(st_begin));
+      ASSERT_EQ(next->second, *std::next(st_begin));
     }
   }
 }
@@ -74,7 +74,7 @@ TEST(Iterator, NextMethod3) {
   auto end = tr.cend();
   for (auto st_begin = set.cbegin(), st_end = set.cend(); st_begin != st_end; ++st_begin) {
     if (auto next = std::next(begin++); next != end) {
-      ASSERT_EQ(*next, *std::next(st_begin));
+      ASSERT_EQ(next->second, *std::next(st_begin));
     }
   }
 }
@@ -102,7 +102,7 @@ TEST(Iterator, Advance1) {
   Treap tr {1, 2};
   auto begin = tr.begin();
   std::advance(begin, 1);
-  ASSERT_EQ(*begin, 2);
+  ASSERT_EQ(begin->second, 2);
 }
 
 TEST(Iterator, Advance2) {
@@ -114,7 +114,7 @@ TEST(Iterator, Advance2) {
   for (int i = 0; i < Size; ++i) {
     auto tmp = tr.begin();
     std::advance(tmp, i);
-    ASSERT_EQ(*tmp, stor[i]);
+    ASSERT_EQ(tmp->second, stor[i]);
   }
 }
 
