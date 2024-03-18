@@ -34,7 +34,7 @@ function run_tests {
           echo -e "${red}failed${usual}"
           npassed_count=$((${npassed_count} + 1))
       fi
-      echo -en "${blue}painted graph:${usual}"
+      echo -en "${blue}queries answers:${usual}"
       printf "\n"
       cat ${ans_file}
       printf "\n"
