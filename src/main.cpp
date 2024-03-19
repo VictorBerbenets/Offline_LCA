@@ -23,7 +23,8 @@ namespace {
     std::size_t l = 0, r = 0;
     for (; is.good(); ) {
       is >> atribute;
-      check_input(is);
+      if (is.fail()) { break; }
+
       if (atribute == 'k') {
         is >> arr_elem;
         check_input(is);
