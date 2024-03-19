@@ -14,7 +14,7 @@
 namespace yLAB {
 
 template <typename T>
-class RmqSolver final: protected SparseTable<std::size_t> {
+class RmqSolver final: private SparseTable<std::size_t> {
  public:
   using value_type  = T;
   using size_type   = std::size_t;
