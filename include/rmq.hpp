@@ -176,7 +176,7 @@ class RmqSolver final: private SparseTable<std::size_t> {
 
   template <std::input_iterator Iter>
   void build_sparse_table(Iter begin, Iter end, size_type size) {
-    size_type log = log2_floor(heights_.size());
+    size_type log = log2_floor(size);
     sparse_.resize(size, std::vector<size_type>(log + 1));
 
     for (int i = 0; begin != end; ++begin, ++i) {
