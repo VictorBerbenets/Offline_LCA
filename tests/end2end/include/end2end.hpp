@@ -30,8 +30,8 @@ class generator final {
   using generator_type    = std::mt19937;
   using distribution_type = std::uniform_int_distribution<T>;
 
-  static constexpr int64_t MIN_VALUE                = 0;
-  static constexpr int64_t MAX_VALUE                = 100000000;
+  static constexpr int MIN_VALUE                = 0;
+  static constexpr int MAX_VALUE                = 100000000;
   static constexpr size_type DEFAULT_SIZE           = 100000;
   static constexpr size_type DEFAULT_QUERIES_NUMBER = 1000;
 
@@ -70,10 +70,10 @@ class generator final {
 
     // generating array
     array_size_ = (array_size_ == 0 ? 1 : array_size_);
-    std::vector<int64_t> array(array_size_);
+    std::vector<int> array(array_size_);
     std::generate(array.begin(), array.end(), [&] { return random_value(min_value_, max_value_); });
     test_file << array_size_ << ' ';
-    std::copy(array.begin(), array.end(), std::ostream_iterator<int64_t>(test_file, " "));
+    std::copy(array.begin(), array.end(), std::ostream_iterator<int>(test_file, " "));
     // generating queries
     std::vector<std::pair<size_type, size_type>> queries(queries_num_);
     std::generate(queries.begin(), queries.end(), [&, size = array.size()] {
@@ -86,8 +86,8 @@ class generator final {
       test_file << l << ' ' << r << ' ';
     }
     // generating answers with sparse table
-    yLAB::SparseTable<int64_t> sparse_table(array.begin(), array.end(), array.size());
-    std::transform(queries.begin(), queries.end(), std::ostream_iterator<int64_t>(ans_file, " "),
+    yLAB::SparseTable<int> sparse_table(array.begin(), array.end(), array.size());
+    std::transform(queries.begin(), queries.end(), std::ostream_iterator<int>(ans_file, " "),
                   [&sparse_table](auto &&pair) {
       return  sparse_table.min({pair.first, pair.second});
     });
@@ -99,7 +99,7 @@ class generator final {
     generator_.seed(static_cast<size_type>(std::time(nullptr)));
   }
 
-  void generate_tests(int64_t min = MIN_VALUE, int64_t max = MAX_VALUE,
+  void generate_tests(int min = MIN_VALUE, int max = MAX_VALUE,
                       size_type arr_sz = DEFAULT_SIZE,
                       size_type queries = DEFAULT_QUERIES_NUMBER) {
     create_source_directory();
@@ -112,8 +112,8 @@ class generator final {
 
  private:
   size_type tests_number_;
-  int64_t min_value_;
-  int64_t max_value_;
+  int min_value_;
+  int max_value_;
   size_type array_size_;
   size_type queries_num_;
   generator_type generator_;
