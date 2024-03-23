@@ -25,12 +25,12 @@ cmake --build .
 ```
 The program will be waiting for input data in stdin in such way:
 ```bash
-<k> num1 <k> num2 <k> ... <q> l1 r1 <q> l2 r2 ...
+<arr_size> num1 num2 ... <queries_num> l1 r1  l2 r2 ...
 ```
-Here `k` are the elements of the array, and `q` are the rmq themselves.  
+Here `arr_size` - the number of elements of the array, and `queries_num` - the number of queries.  
 At the end the program displays answers to all queries. Example:  
 input:  
-k 1 k -1 k 2 k 0 k 5 q 0 0 q 0 1 q 0 3 q 4 4  
+5 1 -1 2 0 5 4 0 0 0 1 0 3 4 4  
 output:  
 1 -1 -1 5
 ## How to run tests:
