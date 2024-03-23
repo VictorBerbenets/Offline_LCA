@@ -32,8 +32,8 @@ class generator final {
 
   static constexpr int64_t MIN_VALUE                = 0;
   static constexpr int64_t MAX_VALUE                = 100000000;
-  static constexpr size_type DEFAULT_SIZE           = 10000000;
-  static constexpr size_type DEFAULT_QUERIES_NUMBER = 1000000;
+  static constexpr size_type DEFAULT_SIZE           = 100000;
+  static constexpr size_type DEFAULT_QUERIES_NUMBER = 1000;
 
   template <std::integral U>
   U random_value(U min_val, U max_val) {
@@ -72,9 +72,8 @@ class generator final {
     array_size_ = (array_size_ == 0 ? 1 : array_size_);
     std::vector<int64_t> array(array_size_);
     std::generate(array.begin(), array.end(), [&] { return random_value(min_value_, max_value_); });
-    for (auto &&v : array) {
-      test_file << "k " << v << ' ';
-    }
+    test_file << array_size_ << ' ';
+    std::copy(array.begin(), array.end(), std::ostream_iterator<int64_t>(test_file, " "));
     // generating queries
     std::vector<std::pair<size_type, size_type>> queries(queries_num_);
     std::generate(queries.begin(), queries.end(), [&, size = array.size()] {
@@ -82,8 +81,9 @@ class generator final {
                        auto r = random_value(l, size - 1);
                        return std::make_pair(l, r);
                   });
+    test_file << queries.size() << ' ';
     for (auto &&[l, r] : queries) {
-      test_file << "q " << l << ' ' << r << ' ';
+      test_file << l << ' ' << r << ' ';
     }
     // generating answers with sparse table
     yLAB::SparseTable<int64_t> sparse_table(array.begin(), array.end(), array.size());
@@ -106,7 +106,6 @@ class generator final {
     min_value_ = min, max_value_ = max, array_size_ = arr_sz,
     queries_num_ = queries;
     for (size_type counter = 1; counter <= tests_number_; ++counter) {
-      std::cout << counter << std::endl;
         generate_array_and_queries(counter);
     }
   }

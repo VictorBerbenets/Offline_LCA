@@ -8,30 +8,25 @@ namespace {
 
   bool compare_answers(std::ifstream &test_file, std::ifstream &ans_file) { 
     std::vector<int64_t> array;
-    std::vector<std::pair<std::size_t, std::size_t>> queries;
-
-    char atribute = 0;
-    int64_t arr_elem = 0;
-    std::size_t l = 0, r = 0;
-    for (; test_file.good(); ) {
-      test_file >> atribute;
-      if (atribute == 'k') {
-        test_file >> arr_elem;
-        array.push_back(arr_elem);
-      } else if (atribute == 'q') {
-        test_file >> l >> r;
-        queries.push_back({l ,r});
-      }
-    }
+    std::vector<int64_t> queries;
+    std::vector<int64_t> data;
+    
+    std::copy(std::istream_iterator<int64_t>(test_file), std::istream_iterator<int64_t>(),
+              std::back_inserter(data));
+    
+    auto begin = data.begin();
+    std::copy_n(std::next(begin), *begin, std::back_inserter(array));
+    std::advance(begin, *begin + 1);
+    std::copy_n(std::next(begin), *begin * 2, std::back_inserter(queries));
+ 
     yLAB::RmqSolver rmq(array.begin(), array.end());
     int64_t answer = 0;
-    for (auto [l, r] : queries) {
+    for (std::size_t i = 0, size = queries.size(); i < size; i += 2) {
       ans_file >> answer;
-      if (answer != rmq.ans_query({l, r})) {
+      if (answer != rmq.ans_query({queries[i], queries[i + 1]})) {
         return false;
       }
     }
-
     return true;
   }
 
