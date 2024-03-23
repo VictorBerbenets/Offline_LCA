@@ -10,11 +10,11 @@
 namespace {
 
   auto get_data(std::istream &is) { 
-    std::vector<int64_t> array;
-    std::vector<int64_t> queries;
-    std::vector<int64_t> data;
+    std::vector<int> array;
+    std::vector<int> queries;
+    std::vector<int> data;
     
-    std::copy(std::istream_iterator<int64_t>(is), std::istream_iterator<int64_t>(),
+    std::copy(std::istream_iterator<int>(is), std::istream_iterator<int>(),
               std::back_inserter(data));
     
     auto begin = data.begin();
@@ -29,7 +29,7 @@ namespace {
 
 int main() {
   auto [array, queries] = get_data(std::cin);
-  yLAB::RmqSolver<int64_t> rmq(array.begin(), array.end());
+  yLAB::RmqSolver rmq(array.begin(), array.end());
 
   for (std::size_t i = 0, size = queries.size(); i < size; i += 2) {
     std::cout << rmq.ans_query({queries[i], queries[i + 1]}) << ' ';

@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
   }
 
   auto test_num = std::stoul(argv[1]);
-  ts::generator<int64_t> gen(test_num);
+  ts::generator<int> gen(test_num);
   if (argc == 2) {
     gen.generate_tests();
   } else if (argc == 3) {

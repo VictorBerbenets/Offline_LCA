@@ -228,7 +228,7 @@ class RmqSolver final: private SparseTable<std::size_t> {
 
  private:
   std::vector<value_type> euler_tour_;
-  std::vector<int64_t> first_appear_;
+  std::vector<int> first_appear_;
   std::vector<size_type> heights_;
   std::vector<size_type> block_types_;
   std::vector<sq_table>  sections_mins_;
