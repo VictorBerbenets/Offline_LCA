@@ -44,9 +44,7 @@ class SparseTable {
     size_type log = log2_floor(n);
     sparse_.resize(log + 1, std::vector<value_type>(n));
 
-    std::transform(begin, end, sparse_[0].begin(), [](const value_type &value) {
-      return value;
-    });
+    std::copy(begin, end, sparse_[0].begin());
 
     for (size_type i = 0; i < log; ++i) {
       for (size_type j = 0; j < n; ++j) {
