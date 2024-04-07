@@ -1,10 +1,10 @@
 #pragma once
 
+#include <utility>
+
 namespace yLAB {
 
 namespace detail {
-
-template <typename, typename> class Node;
 
 template <typename NodeType>
 class BaseNode {
@@ -39,7 +39,9 @@ class Node final: public BaseNode<Node<Key, Priority>> {
       : base_node(left), key_ {key},
         priority_ {priority}, parent_ {parent},
         right_ {right} {}
- 
+  
+  ~Node() = default;
+
   static constexpr base_node_pointer successor(node_pointer node) {
     if (node->right_) {
       return get_most_left(node->right_);
@@ -75,30 +77,30 @@ class Node final: public BaseNode<Node<Key, Priority>> {
 
  private:
   constexpr auto go_upper_dec() const {
-    auto tmp  = parent_;
-    auto copy = this;
-    while (copy == tmp->left()) {
-      copy = static_cast<node_pointer>(std::exchange(tmp,
-                                       static_cast<node_pointer>(tmp)->parent_));
+    auto parent  = parent_;
+    auto self = this;
+    while (self == parent->left()) {
+      self = static_cast<node_pointer>(std::exchange(parent,
+                                       static_cast<node_pointer>(parent)->parent_));
     }
-    if (copy->left_ != tmp) {
-      copy = static_cast<node_pointer>(tmp);
+    if (self->left_ != parent) {
+      self = static_cast<node_pointer>(parent);
     }
-    return copy;
+    return self;
   }
 
   constexpr auto go_upper_inc() const {
-    auto tmp = parent_;
-    auto copy = this;
-    while (tmp->left() != copy &&
-           copy == static_cast<node_pointer>(tmp)->right_) {
-      copy = static_cast<node_pointer>(std::exchange(tmp,
-                                       static_cast<node_pointer>(tmp)->parent_));
+    auto parent = parent_;
+    auto self = this;
+    while (parent->left() != self &&
+           self == static_cast<node_pointer>(parent)->right_) {
+      self = static_cast<node_pointer>(std::exchange(parent,
+                                       static_cast<node_pointer>(parent)->parent_));
     }
-    if (copy->right_ != tmp) {
-      copy = static_cast<node_pointer>(tmp);
+    if (self->right_ != parent) {
+      self = static_cast<node_pointer>(parent);
     }
-    return copy;
+    return self;
   }
  private:
   key_type key_;
